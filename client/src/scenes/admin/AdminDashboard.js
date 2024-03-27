@@ -37,6 +37,10 @@ const AdminDashboard = () => {
         navigate('/surveyor/dashboard');
     };
 
+    const gotoAddQuestion = () => {
+        navigate('/admin/addQuestion')
+    };
+
     const toggleColorMode = () => {
         setMode((prev) => (prev === 'dark' ? 'light' : 'dark'));
     };
@@ -48,13 +52,14 @@ const AdminDashboard = () => {
                 <AdminAppBar mode={mode} toggleColorMode={toggleColorMode} />
                 <div className="wrapper"> {/* Wrap the buttons in a div */}
                     <h1>Admin Dashboard</h1>
-                    <button onClick={goToCreateAccountPermissions} className="login-button">Create Account Permissions</button>
+                    {/* <button onClick={goToCreateAccountPermissions} className="login-button">Create Account Permissions</button>
                     <button onClick={goToCreateUser} className="login-button">Create User</button>
                     <button onClick={goToCreateRole} className="login-button">Create Role</button>
                     <button onClick={goToCreateAccountPermissions} className="login-button">Assign User Role</button>
                     <button onClick={goToUserPermissions} className="login-button">Assign Permissions</button>
                     <button onClick={goToSurveyDashboard} className="login-button">Survey Dashboard</button>
-                    <button onClick={goToAdminSurveyDashboard} className="login-button">Admin Survey Dashboard</button>
+                    <button onClick={goToAdminSurveyDashboard} className="login-button">Admin Survey Dashboard</button> */}
+                    <button onClick={gotoAddQuestion} className="login-button">addQuestion</button>
                 </div>
             </div>
         </ThemeProvider>

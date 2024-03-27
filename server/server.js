@@ -43,6 +43,44 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
+//protected routes for Admin
+app.get('/api/adminRoute', async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const query = `SELECT user_id, role_id FROM user_roles WHERE user_id = $1`;
+        const { rows } = await pool.query(query, [userId]);
+
+        if (rows.length > 0) {
+            // Sending back both user_id and role_id
+            res.json({ user_id: rows[0].user_id, role_id: rows[0].role_id });
+        } else {
+            res.status(404).json({ message: 'User not found' });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+//protected routes for Surveyors
+app.get('/api/surveyorRoute', async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const query = `SELECT user_id, role_id FROM user_roles WHERE user_id = $1`;
+        const { rows } = await pool.query(query, [userId]);
+
+        if (rows.length > 0) {
+            // Sending back both user_id and role_id
+            res.json({ user_id: rows[0].user_id, role_id: rows[0].role_id });
+        } else {
+            res.status(404).json({ message: 'User not found' });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
 //login api endpoint with bcryptjs
 // app.post('/api/login', async (req, res) => {
 //     const { username, password } = req.body;

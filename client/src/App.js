@@ -23,6 +23,7 @@ import RespondentDashboard from './scenes/Respondent/RespondentDashboard.js';
 import AccountPermissions from './scenes/admin/AccountPermissions.js';
 import SurveyDashboard from './scenes/Surveyor/SurveyorDashboard.js';
 import AdminSurveyDashboard from './scenes/admin/AdminSurveyDashboard.js';
+import AddQuestion from './scenes/admin/AddQuestion';
 
 function App() {
   const [backendData, setBackendData] = useState(null);
@@ -57,12 +58,13 @@ function App() {
 
 
         {/* Admin routes */}
-        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        {/* <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/admin/assign-user-role" element={<AssignUserRole />} />
         <Route path="/admin/user-permissions" element={<Permissions />} />
         <Route path="/admin/create-account-permissions" element={<AccountPermissions />} />
         <Route path="/admin/createuser" element={<CreateUser />} />
-        <Route path="/admin/surveydashboard" element={<goToAdminSurveyDashboard />} />
+        <Route path="/admin/surveydashboard" element={<goToAdminSurveyDashboard />} /> */}
+        <Route path="/admin/addQuestion" element={<goToAdminSurveyDashboard />} />
 
 
 
