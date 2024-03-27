@@ -1,0 +1,33 @@
+.survey-dashboard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.dashboard-header {
+    font-size: 40px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.buttons-container {
+    display: flex;
+    gap: 10px; /* Adjust the space between buttons */
+    margin-bottom: 20px;
+}
+
+.dashboard-button {
+    width: 100px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.dashboard-content {
+    padding: 20px;
+}

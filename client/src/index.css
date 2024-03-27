@@ -1,0 +1,84 @@
+/* Resetting default browser styles */
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+}
+
+/* Setting box-sizing for all elements */
+* {
+  box-sizing: border-box;
+}
+
+/* Setting a modern font and color scheme */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #444;
+  background-color: #f8f8f8;
+}
+
+/* Global container styles */
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Header styles */
+.header {
+  background-color: #007bff;
+  color: #fff;
+  padding: 20px;
+  text-align: center;
+}
+
+/* Main content styles */
+.main-content {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+  margin-top: 20px;
+}
+
+/* Question styles */
+.question {
+  font-size: 20px;
+  margin-bottom: 15px;
+}
+
+/* Answer option styles */
+.answer-option {
+  margin-bottom: 10px;
+}
+
+/* Radio button styles */
+input[type='radio'] {
+  margin-right: 10px;
+}
+
+/* Button styles */
+.button {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 5px;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.3s ease;
+}
+
+/* Button hover effect */
+.button:hover {
+  background-color: #0056b3;
+}
