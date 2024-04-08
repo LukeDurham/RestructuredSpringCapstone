@@ -4,25 +4,28 @@ import TextField from '@mui/material/TextField'; // Importing TextField from MUI
 import Button from '@mui/material/Button'; // Importing Button from MUI
 import DeleteButton from '../DeleteBtn'; // Importing DeleteButton into CustomForm
 
+const questionTypes = {
+  'True or False': '1',
+  'Likert Scale': '2',
+  'Multiple Choice': '3',
+};
 
+const CustomForm = ({ onSubmit }) => {
+    // const [inputValues, setInputValues] = useState(['']); // Start with one empty input
+    // const [selectedTypes, setSelectedTypes] = useState({}); // Tracks selected types by question index
 
-const CustomForm = () => {
-    const [inputValues, setInputValues] = useState(['']); // Start with one empty input
-    const [selectedTypes, setSelectedTypes] = useState({}); // Tracks selected types by question index
+    const [inputValues, setInputValues] = useState([{ text: '', type: null }]);
 
     const handleAddQuestion = () => {
-        // Only add a new input if there are less than 3
         if (inputValues.length < 3) {
-            const newIndex = inputValues.length; // Determine the new question's index
             setInputValues([...inputValues, { text: '', type: null }]);
-            setSelectedTypes({ ...selectedTypes, [newIndex]: null }); // Ensure new question starts without a selection
         }
     };
 
-    const handleChange = (index, newValue) => {
-        // Update the specific input's value based on its index
+
+    const handleChange = (index, newText) => {
         const newInputValues = [...inputValues];
-        newInputValues[index] = newValue;
+        newInputValues[index] = { ...newInputValues[index], text: newText };
         setInputValues(newInputValues);
     };
 
@@ -33,12 +36,13 @@ const CustomForm = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         console.log(inputValues); // Logs all input values
-        // Add additional form submission logic here
+        onSubmit(inputValues);
     };
 
     const handleSelectType = (index, type) => {
-        // Update the selected type for the given question index
-        setSelectedTypes({ ...selectedTypes, [index]: type });
+        const newInputValues = [...inputValues];
+        newInputValues[index] = { ...newInputValues[index], type: questionTypes[type] };
+        setInputValues(newInputValues);
     };
 
 
@@ -73,11 +77,12 @@ const CustomForm = () => {
                                 <Button
                                     key={type}
                                     onClick={() => handleSelectType(index, type)}
-                                    className={selectedTypes[index] === type ? 'selected' : 'unselected'}
+                                    className={inputValues[index].type === questionTypes[type] ? 'selected' : 'unselected'}
                                 >
                                     {type}
                                 </Button>
                             ))}
+
                         </CustomButtonGroup>
                     </div>
                 </QuestionWrapper>

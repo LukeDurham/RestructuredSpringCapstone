@@ -3,7 +3,8 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import HomePage from './scenes/common/HomePage';
 import Login from './scenes/Login';
 import About from './scenes/common/About';
-import Survey from './scenes/survey/Survey';
+
+// import Survey from './scenes/survey/Survey';
 
 import AddSurveyQuestions from './scenes/survey/alterSurveys/AddSurveyQuestions';
 import CreateSurvey from './scenes/survey/alterSurveys/CreateSurvey';
@@ -13,17 +14,18 @@ import EmailTemplate from './scenes/survey/alterSurveys/EmailTemplate';
 import SurveyTypes from './scenes/survey/alterSurveys/SurveyTypes';
 import CreateUser from './scenes/admin/CreateUser'
 import AddQuestionType from './scenes/survey/alterSurveys/AddQuestionType';
-import AddSurveyTemplate from './scenes/survey/alterSurveys/SurveyTemplate/AddSurveyTemplate';
 import CreateRole from './scenes/admin/CreateRole';
 import AssignUserRole from './scenes/admin/AssignUserRole';
 import Permissions from './scenes/admin/Permissions';
 import AdminDashboard from './scenes/admin/AdminDashboard';
-import SurveyorDashboard from './scenes/survey/SurveyDashboard.js';
-import RespondentDashboard from './scenes/Respondent/RespondentDashboard.js';
+// import SurveyorDashboard from './scenes/survey/SurveyDashboard.js';
+// import RespondentDashboard from './scenes/Respondent/RespondentDashboard.js';
 import AccountPermissions from './scenes/admin/AccountPermissions.js';
 import SurveyDashboard from './scenes/Surveyor/SurveyorDashboard.js';
 import AdminSurveyDashboard from './scenes/admin/AdminSurveyDashboard.js';
 import AddQuestion from './scenes/admin/AddQuestion';
+import CreateSurveyTemplate from './scenes/admin/CreateSurveyTemplate';
+
 
 function App() {
   const [backendData, setBackendData] = useState(null);
@@ -51,8 +53,8 @@ function App() {
     <BrowserRouter>
       <Routes>
         {/* regular login dashboard for respondents */}
-        <Route path="/respondentDash" element={<RespondentDashboard />} />
-        <Route path="/surveydashboard" element={<SurveyorDashboard />} />
+        {/* <Route path="/respondentDash" element={<RespondentDashboard />} />
+        <Route path="/surveydashboard" element={<SurveyorDashboard />} /> */}
         
 
 
@@ -65,19 +67,20 @@ function App() {
         <Route path="/admin/createuser" element={<CreateUser />} />
         <Route path="/admin/surveydashboard" element={<goToAdminSurveyDashboard />} /> */}
         <Route path="/admin/addQuestion" element={<AddQuestion />} />
+        <Route path="/admin/CreateSurveyTemplate" element={<CreateSurveyTemplate />} />
 
 
 
         {/* Surveyor routes */}
-        <Route path="/surveyor/dashboard" element={<SurveyDashboard />} />
+        {/* <Route path="/surveyor/dashboard" element={<SurveyDashboard />} /> */}
 
 
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<Login />} />
         
         <Route path="/about" element={<About />} />
-        <Route path="/survey" element={<Survey />} />
-        <Route path="/surveydashboard" element={<SurveyDashboard />} />
+        {/* <Route path="/survey" element={<Survey />} /> */}
+        {/* <Route path="/surveydashboard" element={<SurveyDashboard />} /> */}
         <Route path="/add-survey-questions" element={<AddSurveyQuestions />} />
         <Route path="/create-survey" element={<CreateSurvey />} />
         <Route path="/add-question-type" element={<AddQuestionType />} />
@@ -85,8 +88,8 @@ function App() {
         <Route path="/display-survey-results" element={<DisplaySurveyResults />} />
         <Route path="/email-template" element={<EmailTemplate />} />
         <Route path="/survey-types" element={<SurveyTypes />} />
-        <Route path="/createrole" element={<CreateRole />} />
-        <Route path="/add-survey-template" element={<AddSurveyTemplate />} />
+        {/* <Route path="/createrole" element={<CreateRole />} />
+        <Route path="/add-survey-template" element={<AddSurveyTemplate />} /> */}
       </Routes>
     </BrowserRouter>
   );

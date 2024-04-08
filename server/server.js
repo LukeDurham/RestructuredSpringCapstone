@@ -4,8 +4,8 @@ const cors = require('cors');
 const bcrypt = require('bcryptjs');
 
 const pool = require('./config/dbSetup');
+
 const bodyParser = require('body-parser');
-// Ensure you're importing the pool instance correctly
 
 
 const app = express();
@@ -16,9 +16,61 @@ app.use(express.json());
 // app.use(bodyParser.json());
 app.use(cors());
 
+
+
+
 app.get("/api", (req, res) => {
     res.json({ "users": ["Admin", "Surveyor", "Respondent"] });
 });
+
+app.post("/api/CreatingSurveyTemplate", async (req, res) => {
+    const { SurveyTemplate, surveyTemplateQuestions } = req.body;
+    const client = await pool.connect(); // Get a client from the pool
+
+    try {
+        // Begin transaction
+        await client.query('BEGIN');
+
+        // Adjusted query to include created_at, updated_at, and updated_by
+        const insertSurveyTemplateQuery = `
+            INSERT INTO survey_templates
+            (name, description, created_at, created_by, updated_at, updated_by)
+            VALUES ($1, $2, NOW(), $3, NOW(), $3)
+            RETURNING id
+        `;
+        const surveyTemplateResult = await client.query(insertSurveyTemplateQuery, [
+            SurveyTemplate.name,
+            SurveyTemplate.description,
+            SurveyTemplate.created_by
+        ]);
+
+        const surveyTemplateId = surveyTemplateResult.rows[0].id;
+
+        // Insert each question and its association
+        for (const question of surveyTemplateQuestions) {
+            const questionInsertQuery = 'INSERT INTO questions (question_type_id, question) VALUES ($1, $2) RETURNING id';
+            const questionResult = await client.query(questionInsertQuery, [question.question_type_id, question.question]);
+            const questionId = questionResult.rows[0].id;
+
+            const linkInsertQuery = 'INSERT INTO survey_template_question (question_id, survey_template_id) VALUES ($1, $2)';
+            await client.query(linkInsertQuery, [questionId, surveyTemplateId]);
+        }
+
+        // Commit transaction
+        await client.query('COMMIT');
+
+        res.status(201).json({ message: 'Survey template and questions successfully saved.' });
+    } catch (error) {
+        // Rollback transaction on error
+        await client.query('ROLLBACK');
+        res.status(500).json({ message: 'Failed to save survey template and questions.', error: error.message });
+    } finally {
+        client.release(); // Release the client back to the pool
+    }
+});
+
+
+
 
 app.post('/api/login', async (req, res) => {
     const { username, password } = req.body;
@@ -80,6 +132,8 @@ app.get('/api/surveyorRoute', async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 });
+
+
 
 //login api endpoint with bcryptjs
 // app.post('/api/login', async (req, res) => {
@@ -287,15 +341,25 @@ app.get("/api/users", async (req, res) => {
     }
 });
 
-app.post("/api/questions", async (req, res) => {
-    const { question_type_id, question, created_at, updated_at } = req.body;
+app.post("/api/addQuestions", async (req, res) => {
+    const { questions } = req.body;
+
+    console.log(req.body);
+
+
+
 
     try {
-        const result = await pool.query(
-            "INSERT INTO questions (question_type_id, question, created_at, updated_at) VALUES ($1, $2, $3, $4) RETURNING *;",
-            [question_type_id, question, created_at, updated_at]
-        );
-        res.status(201).json(result.rows[0]);
+        const results = await Promise.all(questions.map(async (q) => {
+            // Assuming `type` maps to `question_type_id` and `text` maps to `question`
+            const result = await pool.query(
+                "INSERT INTO questions (question_type_id, question, created_at, updated_at) VALUES ($1, $2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) RETURNING *;",
+                [q.type, q.text] // Use CURRENT_TIMESTAMP for created_at and updated_at
+            );
+            return result.rows[0];
+        }));
+
+        res.status(201).json(results); // Send back an array of inserted questions
     } catch (error) {
         console.error('Error creating question:', error);
         res.status(500).json({ message: 'Failed to create question' });
@@ -303,30 +367,6 @@ app.post("/api/questions", async (req, res) => {
 });
 
 
-//api call for assign-user-role
-app.post("/api/assign_role", async (req, res) => {
-    const { userId, roleId } = req.body; // Correctly use userId and roleId
-
-    try {
-        await pool.query('BEGIN');
-
-        // Generate a random ID for user_roles entry. Consider using a sequence or UUID in production for uniqueness.
-        const randomId = Math.floor(Math.random() * 1000000);
-
-        // Insert the new record with the provided userId and roleId
-        await pool.query(
-            "INSERT INTO user_roles (id, user_id, role_id) VALUES ($1, $2, $3)",
-            [randomId, userId, roleId]
-        );
-
-        await pool.query('COMMIT');
-        res.status(201).json({ message: 'Role assigned successfully' });
-    } catch (error) {
-        await pool.query('ROLLBACK');
-        console.error('Error assigning role:', error);
-        res.status(500).json({ message: 'Failed to assign role' });
-    }
-});
 
 //create Survey Template
 
