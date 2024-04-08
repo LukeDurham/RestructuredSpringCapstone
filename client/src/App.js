@@ -18,14 +18,14 @@ import CreateRole from './scenes/admin/CreateRole';
 import AssignUserRole from './scenes/admin/AssignUserRole';
 import Permissions from './scenes/admin/Permissions';
 import AdminDashboard from './scenes/admin/AdminDashboard';
-// import SurveyorDashboard from './scenes/survey/SurveyDashboard.js';
-// import RespondentDashboard from './scenes/Respondent/RespondentDashboard.js';
+ import SurveyorDashboard from './scenes/survey/SurveyDashboard.js';
+ import RespondentDashboard from './scenes/Respondent/RespondentDashboard.js';
 import AccountPermissions from './scenes/admin/AccountPermissions.js';
 import SurveyDashboard from './scenes/Surveyor/SurveyorDashboard.js';
 import AdminSurveyDashboard from './scenes/admin/AdminSurveyDashboard.js';
 import AddQuestion from './scenes/admin/AddQuestion';
 import CreateSurveyTemplate from './scenes/admin/CreateSurveyTemplate';
-
+import Logout from './scenes/Logout/index.js';
 
 function App() {
   const [backendData, setBackendData] = useState(null);
@@ -53,8 +53,8 @@ function App() {
     <BrowserRouter>
       <Routes>
         {/* regular login dashboard for respondents */}
-        {/* <Route path="/respondentDash" element={<RespondentDashboard />} />
-        <Route path="/surveydashboard" element={<SurveyorDashboard />} /> */}
+         <Route path="/respondentDash" element={<RespondentDashboard />} />
+        {<Route path="/surveyordashboard" element={<SurveyDashboard />} /> }
         
 
 
@@ -72,12 +72,13 @@ function App() {
 
 
         {/* Surveyor routes */}
-        {/* <Route path="/surveyor/dashboard" element={<SurveyDashboard />} /> */}
+        {/* <Route path="/surveyor/dashboard" element={<SurveyDashboard />} />*/ }
 
 
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<Login />} />
-        
+        <Route path="/logout" element={<Logout />} />
+
         <Route path="/about" element={<About />} />
         {/* <Route path="/survey" element={<Survey />} /> */}
         {/* <Route path="/surveydashboard" element={<SurveyDashboard />} /> */}
