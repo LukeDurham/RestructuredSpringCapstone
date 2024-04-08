@@ -5,7 +5,7 @@ body {
   font-family: 'Arial', sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #f4f4f4;
+  background-color: #092635;
   color: #333;
 }
 
@@ -38,6 +38,11 @@ a {
 
 .button:hover {
   background-color: #e0e0e0; /* Light grey on hover */
+}
+
+.login-container h2 {
+  color: white;
+
 }
 
 /* Buttons */
@@ -258,8 +263,15 @@ p{
 }
 
 body, .home-page {
-  background-color: #cfcfcf; /* Sets the background color */
+  background-color: #092635; /* Sets the background color */
 }
+
+.home-page h1,
+.home-page p,
+.home-page h2 {
+  color: white;
+}
+
 
 .form-container {
   width: 120%; /* Adjust width as needed */
@@ -296,9 +308,23 @@ body, .home-page {
 
 /* Login Page */
 
+.login-container {
+  text-align: center; /* Center the text within the container */
+}
+
+.input-group {
+  margin-bottom: 15px; /* Add some space between input groups */
+  display: flex;
+  align-items: center; /* Align items vertically */
+}
+
+.input-group .icon {
+  margin-right: 10px; /* Add space between icon and input */
+}
+
 .wrapper {
     width: 420px;
-    background-color: crimson;
+    background-color: #5c8374;
     border: 2px solid rgba(255, 255, 255,.2);
     box-shadow: 0 0 10px rgba(0, 0, 0, .2);
     color: aliceblue;

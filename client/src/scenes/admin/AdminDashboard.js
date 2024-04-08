@@ -38,7 +38,7 @@ const AdminDashboard = () => {
     };
 
     const goToAdminSurveyDashboard = () => {
-        navigate('/surveyor/dashboard');
+        navigate('/admin/surveydashboard');
     };
 
     const gotoAddQuestion = () => {
@@ -58,18 +58,21 @@ const AdminDashboard = () => {
             <CssBaseline />
             <div>
                 <AdminAppBar mode={mode} toggleColorMode={toggleColorMode} />
-                <div className="wrapper"> {/* Wrap the buttons in a div */}
+                <div className="wrapper" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '0 20px' }}> {/* Wrap the buttons in a div */}
                     <h1>Admin Dashboard</h1>
-                    {/* <button onClick={goToCreateAccountPermissions} className="login-button">Create Account Permissions</button>
-                    <button onClick={goToCreateUser} className="login-button">Create User</button>
-                    <button onClick={goToCreateRole} className="login-button">Create Role</button>
-                    <button onClick={goToCreateAccountPermissions} className="login-button">Assign User Role</button>
-                    <button onClick={goToUserPermissions} className="login-button">Assign Permissions</button>
-                    <button onClick={goToSurveyDashboard} className="login-button">Survey Dashboard</button>
-                    <button onClick={goToAdminSurveyDashboard} className="login-button">Admin Survey Dashboard</button> */}
-                    <button onClick={gotoAddQuestion} className="login-button">addQuestion</button>
-                    <button onClick={goToOrganizations} className="login-button">Organizations</button>
-                    <button onClick={goToCreateSurveyTemplate} className="login-button">Create Survey Template</button>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}> {/* Use flexbox to layout buttons */}
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '50%' }}>
+                            <button onClick={goToCreateAccountPermissions} className="login-button" style={{ padding: '7px 20px', margin: '5px 0', width: '100%', textAlign: 'center', fontSize: '14px' }}>Create Account Permissions</button>
+                            <button onClick={goToCreateUser} className="login-button" style={{ padding: '7px 20px', margin: '5px 0', width: '100%', textAlign: 'center', fontSize: '14px' }}>Create User</button>
+                            <button onClick={goToCreateAccountPermissions} className="login-button" style={{ padding: '7px 20px', margin: '5px 0', width: '100%', textAlign: 'center', fontSize: '14px' }}>Assign User Role</button>
+                            <button onClick={goToCreateSurveyTemplate} className="login-button" style={{ padding: '7px 20px', margin: '5px 0', width: '100%', textAlign: 'center', fontSize: '14px' }}>Create Survey Template</button>
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '50%' }}>
+                            <button onClick={goToUserPermissions} className="login-button" style={{ padding: '7px 20px', margin: '5px 0', width: '100%', textAlign: 'center', fontSize: '14px' }}>Assign Permissions</button>
+                            <button onClick={gotoAddQuestion} className="login-button" style={{ padding: '7px 20px', margin: '5px 0', width: '100%', textAlign: 'center', fontSize: '14px' }}>addQuestion</button>
+                            <button onClick={goToOrganizations} className="login-button" style={{ padding: '7px 20px', margin: '5px 0', width: '100%', textAlign: 'center', fontSize: '14px' }}>Organizations</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </ThemeProvider>

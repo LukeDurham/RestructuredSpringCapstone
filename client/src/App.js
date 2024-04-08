@@ -67,11 +67,11 @@ function App() {
 
         {/* Admin routes */}
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
-        {/* <Route path="/admin/assign-user-role" element={<AssignUserRole />} />
+        <Route path="/admin/assign-user-role" element={<AssignUserRole />} />
         <Route path="/admin/user-permissions" element={<Permissions />} />
         <Route path="/admin/create-account-permissions" element={<AccountPermissions />} />
         <Route path="/admin/createuser" element={<CreateUser />} />
-        <Route path="/admin/surveydashboard" element={<goToAdminSurveyDashboard />} /> */}
+        <Route path="/admin/surveydashboard" element={<AdminSurveyDashboard />} /> 
         <Route path="/admin/addQuestion" element={<AddQuestion />} />
         <Route path="/admin/CreateSurveyTemplate" element={<CreateSurveyTemplate />} />
 

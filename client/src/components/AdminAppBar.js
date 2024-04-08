@@ -70,7 +70,7 @@ function AdminAppBar({ mode, toggleColorMode }) {
             </MenuItem>
             <MenuItem
               component={Link}
-              to="/createuser"
+              to="/admin/createuser"
               sx={{ ...drawerStyles.menuItem }}
             >
               Create User
