@@ -287,15 +287,25 @@ app.get("/api/users", async (req, res) => {
     }
 });
 
-app.post("/api/questions", async (req, res) => {
-    const { question_type_id, question, created_at, updated_at } = req.body;
+app.post("/api/addQuestions", async (req, res) => {
+    const { questions } = req.body;
+
+    console.log(req.body);
+
+
+
 
     try {
-        const result = await pool.query(
-            "INSERT INTO questions (question_type_id, question, created_at, updated_at) VALUES ($1, $2, $3, $4) RETURNING *;",
-            [question_type_id, question, created_at, updated_at]
-        );
-        res.status(201).json(result.rows[0]);
+        const results = await Promise.all(questions.map(async (q) => {
+            // Assuming `type` maps to `question_type_id` and `text` maps to `question`
+            const result = await pool.query(
+                "INSERT INTO questions (question_type_id, question, created_at, updated_at) VALUES ($1, $2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) RETURNING *;",
+                [q.type, q.text] // Use CURRENT_TIMESTAMP for created_at and updated_at
+            );
+            return result.rows[0];
+        }));
+
+        res.status(201).json(results); // Send back an array of inserted questions
     } catch (error) {
         console.error('Error creating question:', error);
         res.status(500).json({ message: 'Failed to create question' });
@@ -303,30 +313,6 @@ app.post("/api/questions", async (req, res) => {
 });
 
 
-//api call for assign-user-role
-app.post("/api/assign_role", async (req, res) => {
-    const { userId, roleId } = req.body; // Correctly use userId and roleId
-
-    try {
-        await pool.query('BEGIN');
-
-        // Generate a random ID for user_roles entry. Consider using a sequence or UUID in production for uniqueness.
-        const randomId = Math.floor(Math.random() * 1000000);
-
-        // Insert the new record with the provided userId and roleId
-        await pool.query(
-            "INSERT INTO user_roles (id, user_id, role_id) VALUES ($1, $2, $3)",
-            [randomId, userId, roleId]
-        );
-
-        await pool.query('COMMIT');
-        res.status(201).json({ message: 'Role assigned successfully' });
-    } catch (error) {
-        await pool.query('ROLLBACK');
-        console.error('Error assigning role:', error);
-        res.status(500).json({ message: 'Failed to assign role' });
-    }
-});
 
 //create Survey Template
 
