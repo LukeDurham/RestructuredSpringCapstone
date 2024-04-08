@@ -8,66 +8,7 @@ const pool = require('./config/dbSetup');
 const bodyParser = require('body-parser');
 // Ensure you're importing the pool instance correctly
 // Example usage with an incorrect survey JSON
-const incorrectSurveyJson = {
-    "id": 30,
-    "name": "Employee Satisfaction Survey - Draft",
-    "description": "A survey to assess employee satisfaction. Draft version with errors.",
-    "created_at": "2024-04-01T12:00:00Z",
-    "created_by": 101,
-    "updated_at": "2024-04-02T12:00:00Z",
-    "updated_by": 102,
-    "deleted_at": null,
-    "deleted_by": null,
-    "pages": [
-        {
-            "name": "page1",
-            "extra_info": "This should not be here", // Example of an unnecessary property
-            "questions": [
-                {
-                    // Missing "id" field
-                    "question_type_id": "unknown", // Incorrect question type
-                    "question": "Is the sky blue?",
-                    "extra_detail": "Extra detail that isn't needed" // Another unnecessary property
-                },
-                {
-                    "id": 2,
-                    "question_type_id": 999, // Non-existent question type
-                    "question": "Do you feel the lecture was informational?",
-                    "comment": "This question needs revision" // Example of an unnecessary comment
-                }
-            ]
-        }
-    ]
-};
 
-const SurveyTemplateJsonStructure = {
-    "id": 1,
-    "name": "Employee Satisfaction Survey",
-    "description": "A survey to assess employee satisfaction within the company.",
-    "created_at": "2024-04-01T12:00:00Z",
-    "created_by": 101,
-    "updated_at": "2024-04-02T12:00:00Z",
-    "updated_by": 102,
-    "deleted_at": null,
-    "deleted_by": null,
-    "pages": [
-        {
-            "name": "page1",
-            "questions": [
-                {
-                    "id": 1,
-                    "question_type_id": 1,
-                    "question": "Is the sky blue?"
-                },
-                {
-                    "id": 2,
-                    "question_type_id": 2,
-                    "question": "Do you feel the lecture was informational?"
-                }
-            ]
-        }
-    ]
-};
 
 // import { Model } from "survey-core";
 // const survey = new Model(surveyJson);
@@ -202,6 +143,8 @@ app.get('/api/surveyorRoute', async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 });
+
+
 
 //login api endpoint with bcryptjs
 // app.post('/api/login', async (req, res) => {

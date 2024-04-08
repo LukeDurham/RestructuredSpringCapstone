@@ -1,38 +1,43 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaUser, FaLock } from "react-icons/fa";
-import { login } from "../utils/authentication"; // Adjust the path as needed
+import { FaUser, FaLock } from "react-icons/fa"; // Ensure these are imported
+import { useAuth } from "../utils/AuthContext";
 
 const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const { login, error, user } = useAuth();
     const navigate = useNavigate();
-    const [error, setError] = useState('');
+
+    useEffect(() => {
+        if (!error && user) {
+            // Navigate based on role
+            switch (user.role) {
+                case 'Admin':
+                    navigate('/admin/dashboard');
+                    break;
+                case 'Surveyor':
+                    navigate('/surveyor/dashboard');
+                    break;
+                case 'Respondent':
+                    navigate('/respondent/dashboard');
+                    break;
+                default:
+                    navigate('/');
+                    break;
+            }
+        }
+    }, [error, user, navigate]); // React to changes in error, user, or navigate
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        try {
-            const userData = await login(username, password);
-            console.log('Login Successful', userData); // You might want to do something more useful here
-            // Based on user role, navigate to different dashboards
-            if (userData.role === 'Admin') {
-                navigate('/admin/dashboard');
-            } else if (userData.role === 'Surveyor') {
-                navigate('/surveyor/dashboard');
-            } else if (userData.role === 'Respondent') {
-                navigate('/respondent/dashboard');
-            } else {
-                navigate('/'); // Default navigation
-            }
-        } catch (err) {
-            setError(err.message);
-        }
+        login(username, password); // Await is not needed here as useEffect will react to state changes
     };
 
     return (
         <div className="login-container">
             <h2>Login</h2>
-            {error && <p className="error">{error}</p>} {/* Display error message */}
+            {error && <p className="error">{error}</p>}
             <form onSubmit={handleLogin}>
                 <div className="input-group">
                     <FaUser className="icon" />
@@ -49,3 +54,7 @@ const Login = () => {
 };
 
 export default Login;
+
+
+
+"../utils/authentication"; // Adjust the path as needed
