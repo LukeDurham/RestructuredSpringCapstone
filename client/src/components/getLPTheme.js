@@ -1,13 +1,4 @@
 import { alpha } from '@mui/material/styles';
-import AppAppBar from './components/AppAppBar';
-import Hero from './components/Hero';
-import LogoCollection from './components/LogoCollection';
-import Highlights from './components/Highlights';
-import Pricing from './components/Pricing';
-import Features from './components/Features';
-import Testimonials from './components/Testimonials';
-import FAQ from './components/FAQ';
-import Footer from './components/Footer';
 
 export const brand = {
   50: '#FDF7E6',
@@ -21,6 +12,20 @@ export const brand = {
   800: '#9F8A34',
   900: '#85721E',
 };
+
+export const DarkMode = {
+  dark: '#092635',
+  lessDark: '#1B4242',
+  light: '#5C8374',
+  lighter: '#9EC8B9'
+}
+
+export const LightMode = {
+  dark: '#092635',
+  lessDark: '#1B4242',
+  light: '#5C8374',
+  lighter: '#9EC8B9'
+}
 
 export const secondary = {
   50: '#E6F7F7',
@@ -65,7 +70,7 @@ const getDesignTokens = (mode) => ({
   palette: {
     mode,
     primary: {
-      light: brand[200],
+      light: DarkMode[lighter],
       main: brand[500],
       dark: brand[800],
       ...(mode === 'dark' && {

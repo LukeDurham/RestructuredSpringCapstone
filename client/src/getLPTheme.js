@@ -1,7 +1,4 @@
 import { alpha } from '@mui/material/styles';
-import AppAppBar from './components/AppAppBar';
-import { grey } from '@mui/material/colors';
-
 
 export const brand = {
   50: '#FDF7E6',
@@ -15,6 +12,20 @@ export const brand = {
   800: '#9F8A34',
   900: '#85721E',
 };
+
+export const DarkMode = {
+  50: '#092635',
+  100: '#1B4242',
+  200: '#5C8374',
+  300: '#9EC8B9'
+}
+
+export const LightMode = {
+  50: '#9EC8B9',
+  100: '#5C8374',
+  200: '#1B4242',
+  300: '#092635',
+}
 
 export const secondary = {
   50: '#E6F7F7',
@@ -35,7 +46,7 @@ export const gray = {
   200: '#D6E2EB',
   300: '#BFCCD9',
   400: '#94A6B8',
-  500: '#f4f4f4', // Changed to #f4f4f4
+  500: '#5B6B7C',
   600: '#4C5967',
   700: '#364049',
   800: '#131B20',
@@ -59,60 +70,33 @@ const getDesignTokens = (mode) => ({
   palette: {
     mode,
     primary: {
-      light: brand[200],
-      main: brand[500],
-      dark: brand[800],
-      ...(mode === 'dark' && {
-        light: brand[300],
-        main: brand[400],
-        dark: brand[800],
-      }),
+      light: mode === 'light' ? LightMode[300] : DarkMode[300],
+      main: mode === 'light' ? LightMode[200] : DarkMode[200],
+      dark: mode === 'light' ? LightMode[100] : DarkMode[100],
     },
     secondary: {
-      light: secondary[300],
+      light: secondary[200],
       main: secondary[500],
-      dark: secondary[800],
-      ...(mode === 'dark' && {
-        light: secondary[400],
-        main: secondary[500],
-        dark: secondary[900],
-      }),
+      dark: secondary[700],
     },
     success: {
-      light: green[300],
-      main: green[400],
-      dark: green[800],
-      ...(mode === 'dark' && {
-        light: green[400],
-        main: green[500],
-        dark: green[700],
-      }),
+      light: mode === 'light' ? green[300] : DarkMode[200],
+      main: mode === 'light' ? green[400] : DarkMode[100],
+      dark: mode === 'light' ? green[800] : DarkMode[50],
     },
     grey: {
-      50: gray[50],
-      100: gray[100],
-      200: gray[200],
-      300: gray[300],
-      400: gray[400],
-      500: gray[500],
-      600: gray[600],
-      700: gray[700],
-      800: gray[800],
-      900: gray[900],
+      ...gray,
     },
     divider: mode === 'dark' ? alpha(gray[600], 0.3) : alpha(gray[300], 0.5),
     background: {
-      default: mode === 'dark' ? '#000000' : gray[500], // Changed default background color
+      default: mode === 'light' ? LightMode[50] : DarkMode[50],
     },
     text: {
-      primary: mode === 'dark' ? '#FFFFFF' : '#000000', // Changed text color
-      secondary: mode === 'dark' ? '#FFFFFF' : '#000000', // Changed secondary text color
+      primary: '#000000',
+      secondary: '#000000',
     },
     action: {
-      selected: `${alpha(brand[200], 0.2)}`,
-      ...(mode === 'dark' && {
-        selected: alpha(brand[800], 0.2),
-      }),
+      selected: mode === 'light' ? alpha(LightMode[200], 0.2) : alpha(DarkMode[50], 0.2),
     },
   },
   typography: {
@@ -178,7 +162,7 @@ export default function getLPTheme(mode) {
           root: ({ theme }) => ({
             padding: 8,
             overflow: 'clip',
-            backgroundColor: '#f4f4f4',
+            backgroundColor: '#fff',
             border: '1px solid',
             borderColor: gray[100],
             ':before': {
@@ -193,7 +177,7 @@ export default function getLPTheme(mode) {
               borderBottomRightRadius: 10,
             },
             ...(theme.palette.mode === 'dark' && {
-              backgroundColor: gray[500],
+              backgroundColor: gray[900],
               borderColor: gray[800],
             }),
           }),
@@ -219,7 +203,7 @@ export default function getLPTheme(mode) {
       MuiToggleButtonGroup: {
         styleOverrides: {
           root: ({ theme }) => ({
-            borderRadius: '10px',
+            borderRadius: 10,
             boxShadow: `0 4px 16px ${alpha(gray[400], 0.2)}`,
             '& .Mui-selected': {
               color: brand[500],
@@ -311,26 +295,9 @@ export default function getLPTheme(mode) {
             border: `1px solid ${alpha(gray[200], 0.8)}`,
             boxShadow: 'none',
             transition: 'background-color, border, 80ms ease',
-            ...(ownerState.variant === 'outlined' && {
-              background: `linear-gradient(to bottom, #FFF, ${gray[50]})`,
-              '&:hover': {
-                borderColor: brand[300],
-                boxShadow: `0 0 24px ${brand[100]}`,
-              },
-            }),
             ...(theme.palette.mode === 'dark' && {
               backgroundColor: alpha(gray[800], 0.6),
               border: `1px solid ${alpha(gray[700], 0.3)}`,
-              ...(ownerState.variant === 'outlined' && {
-                background: `linear-gradient(to bottom, ${gray[900]}, ${alpha(
-                  gray[800],
-                  0.5,
-                )})`,
-                '&:hover': {
-                  borderColor: brand[700],
-                  boxShadow: `0 0 24px ${brand[800]}`,
-                },
-              }),
             }),
           }),
         },
@@ -352,12 +319,6 @@ export default function getLPTheme(mode) {
               borderColor: brand[800],
               backgroundColor: brand[200],
             },
-            '& .MuiChip-label': {
-              color: brand[500],
-            },
-            '& .MuiChip-icon': {
-              color: brand[500],
-            },
             ...(theme.palette.mode === 'dark' && {
               background: `linear-gradient(to bottom right, ${brand[700]}, ${brand[900]})`,
               borderColor: `${alpha(brand[500], 0.5)}`,
@@ -367,12 +328,6 @@ export default function getLPTheme(mode) {
               '&:focus-visible': {
                 borderColor: brand[200],
                 backgroundColor: brand[600],
-              },
-              '& .MuiChip-label': {
-                color: brand[200],
-              },
-              '& .MuiChip-icon': {
-                color: brand[200],
               },
             }),
           }),
