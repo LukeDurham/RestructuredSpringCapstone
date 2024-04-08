@@ -6,69 +6,6 @@ const bcrypt = require('bcryptjs');
 const pool = require('./config/dbSetup');
 
 const bodyParser = require('body-parser');
-// Ensure you're importing the pool instance correctly
-// Example usage with an incorrect survey JSON
-
-
-// import { Model } from "survey-core";
-// const survey = new Model(surveyJson);
-// const correctSurveyJson = survey.toJSON();
-
-// import { Model } from "survey-core";
-// const survey = new Model(surveyTemplateJson);
-// const surveyTemplateQuestions = new Model(surveyTemplateQuestionsjson)
-// function validateAndCleanSurveyJSON(incorrectSurveyJson) {
-//     const { SurveyModel } = require("survey-core");
-//     const survey = new SurveyModel(incorrectSurveyJson);
-
-//     survey.pages.forEach(page => {
-//         (page.questions || []).forEach(question => {
-//             if (!["text", "checkbox", "radiogroup", "rating"].includes(question.getType())) {
-//                 question.type = "text"; // Defaulting unknown question types to 'text'
-//             }
-//         });
-//     });
-
-//     const cleanedSurveyJson = survey.toJSON();
-
-//     // Helper function to validate and format date strings
-//     const formatDate = (dateStr) => {
-//         const date = new Date(dateStr);
-//         return !isNaN(date.getTime()) ? date.toISOString() : null;
-//     };
-
-//     // Extract survey template metadata with proper formatting
-//     const surveyTemplate = {
-//         id: parseInt(cleanedSurveyJson.id),
-//         name: cleanedSurveyJson.name || "Default Survey Name",
-//         description: cleanedSurveyJson.description || "Default survey description.",
-//         created_at: formatDate(cleanedSurveyJson.created_at),
-//         created_by: parseInt(cleanedSurveyJson.created_by),
-//         updated_at: formatDate(cleanedSurveyJson.updated_at),
-//         updated_by: parseInt(cleanedSurveyJson.updated_by),
-//         deleted_at: null,
-//         deleted_by: null
-//     };
-
-//     // Prepare questions for the survey_template_questions table
-//     const surveyTemplateQuestions = [];
-//     cleanedSurveyJson.pages.forEach(page => {
-//         (page.questions || []).forEach((question, index) => {
-//             surveyTemplateQuestions.push({
-//                 id: question.id ? parseInt(question.id) : index + 1,
-//                 survey_template_id: surveyTemplate.id,
-//                 question_type_id: parseInt(question.question_type_id),
-//                 question: question.question
-//             });
-//         });
-//     });
-
-//     return { surveyTemplate, surveyTemplateQuestions };
-// }
-
-// const { surveyTemplate, surveyTemplateQuestions } = validateAndCleanSurveyJSON(incorrectSurveyJson);
-// console.log("Survey Template:", surveyTemplate);
-// console.log("Survey Template Questions:", surveyTemplateQuestions);
 
 
 const app = express();
@@ -79,9 +16,61 @@ app.use(express.json());
 // app.use(bodyParser.json());
 app.use(cors());
 
+
+
+
 app.get("/api", (req, res) => {
     res.json({ "users": ["Admin", "Surveyor", "Respondent"] });
 });
+
+app.post("/api/CreatingSurveyTemplate", async (req, res) => {
+    const { SurveyTemplate, surveyTemplateQuestions } = req.body;
+    const client = await pool.connect(); // Get a client from the pool
+
+    try {
+        // Begin transaction
+        await client.query('BEGIN');
+
+        // Adjusted query to include created_at, updated_at, and updated_by
+        const insertSurveyTemplateQuery = `
+            INSERT INTO survey_templates
+            (name, description, created_at, created_by, updated_at, updated_by)
+            VALUES ($1, $2, NOW(), $3, NOW(), $3)
+            RETURNING id
+        `;
+        const surveyTemplateResult = await client.query(insertSurveyTemplateQuery, [
+            SurveyTemplate.name,
+            SurveyTemplate.description,
+            SurveyTemplate.created_by
+        ]);
+
+        const surveyTemplateId = surveyTemplateResult.rows[0].id;
+
+        // Insert each question and its association
+        for (const question of surveyTemplateQuestions) {
+            const questionInsertQuery = 'INSERT INTO questions (question_type_id, question) VALUES ($1, $2) RETURNING id';
+            const questionResult = await client.query(questionInsertQuery, [question.question_type_id, question.question]);
+            const questionId = questionResult.rows[0].id;
+
+            const linkInsertQuery = 'INSERT INTO survey_template_question (question_id, survey_template_id) VALUES ($1, $2)';
+            await client.query(linkInsertQuery, [questionId, surveyTemplateId]);
+        }
+
+        // Commit transaction
+        await client.query('COMMIT');
+
+        res.status(201).json({ message: 'Survey template and questions successfully saved.' });
+    } catch (error) {
+        // Rollback transaction on error
+        await client.query('ROLLBACK');
+        res.status(500).json({ message: 'Failed to save survey template and questions.', error: error.message });
+    } finally {
+        client.release(); // Release the client back to the pool
+    }
+});
+
+
+
 
 app.post('/api/login', async (req, res) => {
     const { username, password } = req.body;

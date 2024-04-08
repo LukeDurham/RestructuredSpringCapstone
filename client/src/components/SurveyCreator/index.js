@@ -16,27 +16,30 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import { AuthContext, useAuth } from '../../scenes/utils/AuthContext';
 
 
-export const SurveyCreatorComponent = () => {
+
+export const SurveyCreatorComponent = ({ setSuccessMessage, setErrorMessage }) => {
     const [questions, setQuestions] = useState([]);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [templateName, setTemplateName] = useState('');
+    const [submitError, setSubmitError] = useState('');
     const [templateDescription, setTemplateDescription] = useState('');
+    const { user } = useAuth();
 
 
     const openSubmitDialog = () => {
         setIsDialogOpen(true);
     };
 
-    const handleSubmitSurvey = () => {
-        // Assuming setIsDialogOpen, setTemplateName, and setTemplateDescription update the state to control the dialog
+    const handleSubmitSurvey = async () => {
         setIsDialogOpen(false);
 
-        // SurveyTemplate JSON object
         const SurveyTemplate = {
             name: templateName,
             description: templateDescription,
+            created_by: user?.id || 'anonymous',
         };
 
         const questionTypeToId = {
@@ -46,16 +49,34 @@ export const SurveyCreatorComponent = () => {
         };
 
         const surveyTemplateQuestions = questions.map(question => ({
-            id: questionTypeToId[question.type], // Map type to ID
-            question: question.questionText, // The question text
-            // You can include other details like options here if necessary
+            id: questionTypeToId[question.type],
+            question: question.questionText,
         }));
 
+        try {
+            const response = await fetch('/api/CreatingSurveyTemplate', { // Ensure the URL matches your backend endpoint
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ SurveyTemplate, surveyTemplateQuestions }),
+            });
 
-        // For demonstration, we'll log the JSON objects to the console
-        console.log(JSON.stringify({ SurveyTemplate, surveyTemplateQuestions }));
+            if (response.status === 201) {
+                console.log('Survey template successfully created');
+                // Signal success back to the component or context managing this state
+                setSuccessMessage('Survey template successfully created'); // Assuming you have state for this
+            } else {
+                throw new Error('Failed to save survey template and questions');
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            setErrorMessage(error.message); // Assuming you have state for this
+        }
 
-        // Here you could also send these JSON objects to a server or handle them as needed
+        setTemplateName('');
+        setTemplateDescription('');
+        setQuestions([]);
     };
 
 
@@ -176,6 +197,8 @@ export const SurveyCreatorComponent = () => {
                 {questions.length > 0 && (
                     <Button variant="contained" onClick={openSubmitDialog}>Submit Survey Template</Button>
                 )}
+                {/* Render the submission error message if present */}
+                {submitError && <p className="error">{submitError}</p>}
             </SurveyContainer>
             <Dialog open={isDialogOpen} onClose={() => setIsDialogOpen(false)}>
                 <DialogTitle>Submit Survey Template</DialogTitle>

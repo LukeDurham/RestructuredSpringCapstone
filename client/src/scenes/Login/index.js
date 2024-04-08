@@ -56,5 +56,3 @@ const Login = () => {
 export default Login;
 
 
-
-"../utils/authentication"; // Adjust the path as needed
