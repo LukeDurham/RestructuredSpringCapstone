@@ -27,6 +27,12 @@ import AddQuestion from './scenes/admin/AddQuestion';
 import CreateSurveyTemplate from './scenes/admin/CreateSurveyTemplate';
 
 
+import Organizations from './scenes/admin/Organizations/Organizations.js';
+import AddOrganization from './scenes/admin/Organizations/AddOrganization.js';
+import RemoveOrganization from './scenes/admin/Organizations/RemoveOrganization.js';
+import EditOrganization from './scenes/admin/Organizations/EditOrganization.js';
+
+
 function App() {
   const [backendData, setBackendData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -68,6 +74,11 @@ function App() {
         <Route path="/admin/surveydashboard" element={<goToAdminSurveyDashboard />} /> */}
         <Route path="/admin/addQuestion" element={<AddQuestion />} />
         <Route path="/admin/CreateSurveyTemplate" element={<CreateSurveyTemplate />} />
+
+        <Route path="/admin/organizations" exact element={<Organizations />} />
+        <Route path="/admin/organizations/add" element={<AddOrganization />} />
+        <Route path="/admin/organizations/remove" element={<RemoveOrganization />} />
+        <Route path="/admin/organizations/edit" element={<EditOrganization />} />
 
 
 

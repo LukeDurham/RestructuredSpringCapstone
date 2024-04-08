@@ -16,17 +16,22 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import { AuthContext, useAuth } from '../../scenes/utils/AuthContext';
+import { useAuth } from '../../scenes/utils/AuthContext';
 
-
+const questionTypeToId = {
+    'True or False': 1,
+    'Likert Scale': 2,
+    'Multiple Choice': 3
+};
 
 export const SurveyCreatorComponent = ({ setSuccessMessage, setErrorMessage }) => {
     const [questions, setQuestions] = useState([]);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [templateName, setTemplateName] = useState('');
-    const [submitError, setSubmitError] = useState('');
+    const [submitError, setSubmitError] = useState(''); // If you decide to use it, uncomment
     const [templateDescription, setTemplateDescription] = useState('');
     const { user } = useAuth();
+
 
 
     const openSubmitDialog = () => {
@@ -36,48 +41,77 @@ export const SurveyCreatorComponent = ({ setSuccessMessage, setErrorMessage }) =
     const handleSubmitSurvey = async () => {
         setIsDialogOpen(false);
 
-        const SurveyTemplate = {
-            name: templateName,
-            description: templateDescription,
-            created_by: user?.id || 'anonymous',
-        };
-
-        const questionTypeToId = {
-            'True or False': 1,
-            'Likert Scale': 2,
-            'Multiple Choice': 3,
-        };
-
-        const surveyTemplateQuestions = questions.map(question => ({
-            id: questionTypeToId[question.type],
-            question: question.questionText,
-        }));
-
+        // Step 1: Create Survey Template
         try {
-            const response = await fetch('/api/CreatingSurveyTemplate', { // Ensure the URL matches your backend endpoint
+            const templateResponse = await fetch('/api/CreatingSurveyTemplate/survey_templates', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ SurveyTemplate, surveyTemplateQuestions }),
+                body: JSON.stringify({
+                    name: templateName,
+                    description: templateDescription,
+                    created_by: user?.id || 0, // Default to 0 if user id is not available
+                }),
             });
 
-            if (response.status === 201) {
-                console.log('Survey template successfully created');
-                // Signal success back to the component or context managing this state
-                setSuccessMessage('Survey template successfully created'); // Assuming you have state for this
-            } else {
-                throw new Error('Failed to save survey template and questions');
+            if (templateResponse.status !== 201) {
+                const errorMsg = await templateResponse.text();
+                throw new Error(`Failed to create survey template: ${errorMsg}`);
             }
+
+            const { id: surveyTemplateId } = await templateResponse.json();
+
+            // Step 2: Create Questions
+            const questionsResponse = await fetch('/api/CreatingSurveyTemplate/questions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    questions: questions.map(question => ({
+                        question_type_id: questionTypeToId[question.type],
+                        question: question.questionText,
+                    })),
+                }),
+            });
+
+            if (questionsResponse.status !== 201) {
+                const errorMsg = await questionsResponse.text();
+                throw new Error(`Failed to create questions: ${errorMsg}`);
+            }
+
+            const { questionIds } = await questionsResponse.json();
+
+            // Step 3: Link Survey Template with Questions
+            const linkResponse = await fetch('/api/CreatingSurveyTemplate/survey_template_questions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ surveyTemplateId, questionIds }),
+            });
+
+            if (linkResponse.status !== 201) {
+                const errorMsg = await linkResponse.text();
+                throw new Error(`Failed to link survey template and questions: ${errorMsg}`);
+            }
+
+            console.log('Survey template and questions successfully created and linked');
+            setSuccessMessage('Survey template and questions successfully created and linked');
+
+            // Reset form state after successful submission
+            setTemplateName('');
+            setTemplateDescription('');
+            setQuestions([]);
+
         } catch (error) {
             console.error("Error:", error);
-            setErrorMessage(error.message); // Assuming you have state for this
+            setErrorMessage(error.message);
         }
-
-        setTemplateName('');
-        setTemplateDescription('');
-        setQuestions([]);
     };
+
+
 
 
     const addQuestion = (type) => {
