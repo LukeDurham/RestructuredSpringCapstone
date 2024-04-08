@@ -23,51 +23,95 @@ app.get("/api", (req, res) => {
     res.json({ "users": ["Admin", "Surveyor", "Respondent"] });
 });
 
-app.post("/api/CreatingSurveyTemplate", async (req, res) => {
-    const { SurveyTemplate, surveyTemplateQuestions } = req.body;
-    const client = await pool.connect(); // Get a client from the pool
 
+
+
+app.post("/api/CreatingSurveyTemplate/survey_templates", async (req, res) => {
+    const { name, description, created_by } = req.body;
+    const client = await pool.connect();
     try {
-        // Begin transaction
-        await client.query('BEGIN');
-
-        // Adjusted query to include created_at, updated_at, and updated_by
         const insertSurveyTemplateQuery = `
             INSERT INTO survey_templates
             (name, description, created_at, created_by, updated_at, updated_by)
             VALUES ($1, $2, NOW(), $3, NOW(), $3)
             RETURNING id
         `;
-        const surveyTemplateResult = await client.query(insertSurveyTemplateQuery, [
-            SurveyTemplate.name,
-            SurveyTemplate.description,
-            SurveyTemplate.created_by
-        ]);
+        const result = await client.query(insertSurveyTemplateQuery, [name, description, created_by]);
+        const surveyTemplateId = result.rows[0].id;
 
-        const surveyTemplateId = surveyTemplateResult.rows[0].id;
-
-        // Insert each question and its association
-        for (const question of surveyTemplateQuestions) {
-            const questionInsertQuery = 'INSERT INTO questions (question_type_id, question) VALUES ($1, $2) RETURNING id';
-            const questionResult = await client.query(questionInsertQuery, [question.question_type_id, question.question]);
-            const questionId = questionResult.rows[0].id;
-
-            const linkInsertQuery = 'INSERT INTO survey_template_question (question_id, survey_template_id) VALUES ($1, $2)';
-            await client.query(linkInsertQuery, [questionId, surveyTemplateId]);
-        }
-
-        // Commit transaction
-        await client.query('COMMIT');
-
-        res.status(201).json({ message: 'Survey template and questions successfully saved.' });
+        res.status(201).json({ message: 'Survey template successfully saved.', id: surveyTemplateId });
     } catch (error) {
-        // Rollback transaction on error
-        await client.query('ROLLBACK');
-        res.status(500).json({ message: 'Failed to save survey template and questions.', error: error.message });
+        res.status(500).json({ message: 'Failed to save survey template.', error: error.message });
     } finally {
-        client.release(); // Release the client back to the pool
+        client.release();
     }
 });
+
+app.post("/api/CreatingSurveyTemplate/questions", async (req, res) => {
+    const { questions } = req.body; // Expecting an array of { question_type_id, question }
+    const client = await pool.connect();
+    try {
+        await client.query('BEGIN');
+        const questionIds = [];
+
+        for (const question of questions) {
+            const questionInsertQuery = 'INSERT INTO questions (question_type_id, question) VALUES ($1, $2) RETURNING id';
+            const result = await client.query(questionInsertQuery, [question.question_type_id, question.question]);
+            questionIds.push(result.rows[0].id);
+        }
+
+        await client.query('COMMIT');
+        res.status(201).json({ message: 'Questions successfully saved.', questionIds });
+    } catch (error) {
+        await client.query('ROLLBACK');
+        res.status(500).json({ message: 'Failed to save questions.', error: error.message });
+    } finally {
+        client.release();
+    }
+});
+
+app.post("/api/CreatingSurveyTemplate/survey_template_questions", async (req, res) => {
+    const { surveyTemplateId, questionIds } = req.body;
+    const userId = req.user?.id || 0; // Adjust according to how you're handling user authentication
+    // Assuming you're obtaining the description for the survey template in another part of your application
+    const description = "Placeholder for survey template description"; // Replace or fetch dynamically as needed
+
+    console.log("Received request:", JSON.stringify(req.body, null, 2));
+
+    const client = await pool.connect();
+
+    try {
+        await client.query('BEGIN');
+
+        const insertQuery = `
+            INSERT INTO survey_template_questions
+            (question_id, survey_template_id, description, created_at, created_by, updated_at, updated_by)
+            VALUES ($1, $2, $3, NOW(), $4, NOW(), $5)`;
+
+        for (const questionId of questionIds) {
+            await client.query(insertQuery, [questionId, surveyTemplateId, description, userId, userId]);
+            console.log(`Inserted: questionId ${questionId}, surveyTemplateId ${surveyTemplateId}`);
+        }
+
+        await client.query('COMMIT');
+        res.status(201).json({ message: 'Survey template and questions successfully linked.' });
+    } catch (error) {
+        await client.query('ROLLBACK');
+        console.error("Failed to link survey template and questions:", error);
+        res.status(500).json({
+            message: 'Failed to link survey template and questions.',
+            error: error.message
+        });
+    } finally {
+        client.release();
+    }
+});
+
+
+
+
+
+
 
 
 

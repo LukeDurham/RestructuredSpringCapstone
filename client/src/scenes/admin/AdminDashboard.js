@@ -45,6 +45,10 @@ const AdminDashboard = () => {
         navigate('/admin/addQuestion')
     };
 
+    const goToOrganizations = () => {
+        navigate('/admin/organizations')
+    };
+
     const toggleColorMode = () => {
         setMode((prev) => (prev === 'dark' ? 'light' : 'dark'));
     };
@@ -64,6 +68,7 @@ const AdminDashboard = () => {
                     <button onClick={goToSurveyDashboard} className="login-button">Survey Dashboard</button>
                     <button onClick={goToAdminSurveyDashboard} className="login-button">Admin Survey Dashboard</button> */}
                     <button onClick={gotoAddQuestion} className="login-button">addQuestion</button>
+                    <button onClick={goToOrganizations} className="login-button">Organizations</button>
                     <button onClick={goToCreateSurveyTemplate} className="login-button">Create Survey Template</button>
                 </div>
             </div>
