@@ -4,8 +4,130 @@ const cors = require('cors');
 const bcrypt = require('bcryptjs');
 
 const pool = require('./config/dbSetup');
+
 const bodyParser = require('body-parser');
 // Ensure you're importing the pool instance correctly
+// Example usage with an incorrect survey JSON
+const incorrectSurveyJson = {
+    "id": 30,
+    "name": "Employee Satisfaction Survey - Draft",
+    "description": "A survey to assess employee satisfaction. Draft version with errors.",
+    "created_at": "2024-04-01T12:00:00Z",
+    "created_by": 101,
+    "updated_at": "2024-04-02T12:00:00Z",
+    "updated_by": 102,
+    "deleted_at": null,
+    "deleted_by": null,
+    "pages": [
+        {
+            "name": "page1",
+            "extra_info": "This should not be here", // Example of an unnecessary property
+            "questions": [
+                {
+                    // Missing "id" field
+                    "question_type_id": "unknown", // Incorrect question type
+                    "question": "Is the sky blue?",
+                    "extra_detail": "Extra detail that isn't needed" // Another unnecessary property
+                },
+                {
+                    "id": 2,
+                    "question_type_id": 999, // Non-existent question type
+                    "question": "Do you feel the lecture was informational?",
+                    "comment": "This question needs revision" // Example of an unnecessary comment
+                }
+            ]
+        }
+    ]
+};
+
+const SurveyTemplateJsonStructure = {
+    "id": 1,
+    "name": "Employee Satisfaction Survey",
+    "description": "A survey to assess employee satisfaction within the company.",
+    "created_at": "2024-04-01T12:00:00Z",
+    "created_by": 101,
+    "updated_at": "2024-04-02T12:00:00Z",
+    "updated_by": 102,
+    "deleted_at": null,
+    "deleted_by": null,
+    "pages": [
+        {
+            "name": "page1",
+            "questions": [
+                {
+                    "id": 1,
+                    "question_type_id": 1,
+                    "question": "Is the sky blue?"
+                },
+                {
+                    "id": 2,
+                    "question_type_id": 2,
+                    "question": "Do you feel the lecture was informational?"
+                }
+            ]
+        }
+    ]
+};
+
+// import { Model } from "survey-core";
+// const survey = new Model(surveyJson);
+// const correctSurveyJson = survey.toJSON();
+
+// import { Model } from "survey-core";
+// const survey = new Model(surveyTemplateJson);
+// const surveyTemplateQuestions = new Model(surveyTemplateQuestionsjson)
+// function validateAndCleanSurveyJSON(incorrectSurveyJson) {
+//     const { SurveyModel } = require("survey-core");
+//     const survey = new SurveyModel(incorrectSurveyJson);
+
+//     survey.pages.forEach(page => {
+//         (page.questions || []).forEach(question => {
+//             if (!["text", "checkbox", "radiogroup", "rating"].includes(question.getType())) {
+//                 question.type = "text"; // Defaulting unknown question types to 'text'
+//             }
+//         });
+//     });
+
+//     const cleanedSurveyJson = survey.toJSON();
+
+//     // Helper function to validate and format date strings
+//     const formatDate = (dateStr) => {
+//         const date = new Date(dateStr);
+//         return !isNaN(date.getTime()) ? date.toISOString() : null;
+//     };
+
+//     // Extract survey template metadata with proper formatting
+//     const surveyTemplate = {
+//         id: parseInt(cleanedSurveyJson.id),
+//         name: cleanedSurveyJson.name || "Default Survey Name",
+//         description: cleanedSurveyJson.description || "Default survey description.",
+//         created_at: formatDate(cleanedSurveyJson.created_at),
+//         created_by: parseInt(cleanedSurveyJson.created_by),
+//         updated_at: formatDate(cleanedSurveyJson.updated_at),
+//         updated_by: parseInt(cleanedSurveyJson.updated_by),
+//         deleted_at: null,
+//         deleted_by: null
+//     };
+
+//     // Prepare questions for the survey_template_questions table
+//     const surveyTemplateQuestions = [];
+//     cleanedSurveyJson.pages.forEach(page => {
+//         (page.questions || []).forEach((question, index) => {
+//             surveyTemplateQuestions.push({
+//                 id: question.id ? parseInt(question.id) : index + 1,
+//                 survey_template_id: surveyTemplate.id,
+//                 question_type_id: parseInt(question.question_type_id),
+//                 question: question.question
+//             });
+//         });
+//     });
+
+//     return { surveyTemplate, surveyTemplateQuestions };
+// }
+
+// const { surveyTemplate, surveyTemplateQuestions } = validateAndCleanSurveyJSON(incorrectSurveyJson);
+// console.log("Survey Template:", surveyTemplate);
+// console.log("Survey Template Questions:", surveyTemplateQuestions);
 
 
 const app = express();

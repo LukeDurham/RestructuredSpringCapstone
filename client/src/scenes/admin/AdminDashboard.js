@@ -33,6 +33,10 @@ const AdminDashboard = () => {
         navigate('/surveydashboard'); 
     };
 
+    const goToCreateSurveyTemplate = () => {
+        navigate('/admin/CreateSurveyTemplate');
+    };
+
     const goToAdminSurveyDashboard = () => {
         navigate('/surveyor/dashboard');
     };
@@ -60,6 +64,7 @@ const AdminDashboard = () => {
                     <button onClick={goToSurveyDashboard} className="login-button">Survey Dashboard</button>
                     <button onClick={goToAdminSurveyDashboard} className="login-button">Admin Survey Dashboard</button> */}
                     <button onClick={gotoAddQuestion} className="login-button">addQuestion</button>
+                    <button onClick={goToCreateSurveyTemplate} className="login-button">Create Survey Template</button>
                 </div>
             </div>
         </ThemeProvider>
