@@ -6,21 +6,38 @@ import About from './scenes/common/About';
 
 // import Survey from './scenes/survey/Survey';
 
+
+//admin
+
+//usermanagement import
+import UserManagement from './scenes/admin/UserManagement/UserManagement.js';
+//User Management component imports
+import AssignUserPermissions from './scenes/admin/UserManagement/components/AssignUserPermissions.js';
+import AssignUserRole from './scenes/admin/UserManagement/components/AssignUserRole.js';
+import CreateAccountPermissions from './scenes/admin/UserManagement/components/CreateAccountPermissions.js';
+import CreateUser from './scenes/admin/UserManagement/components/CreateUser.js'
+import CreateUserRole from './scenes/admin/UserManagement/components/CreateUserRole.js';
+
+
+
+
+
+
 import AddSurveyQuestions from './scenes/survey/alterSurveys/AddSurveyQuestions';
 import CreateSurvey from './scenes/survey/alterSurveys/CreateSurvey';
 import DeleteQuestionFromSurvey from './scenes/survey/alterSurveys/DeleteQuestionFromSurvey';
 import DisplaySurveyResults from './scenes/survey/alterSurveys/DisplaySurveyResults';
 import EmailTemplate from './scenes/survey/alterSurveys/EmailTemplate';
 import SurveyTypes from './scenes/survey/alterSurveys/SurveyTypes';
-import CreateUser from './scenes/admin/CreateUser'
+
 import AddQuestionType from './scenes/survey/alterSurveys/AddQuestionType';
-import CreateRole from './scenes/admin/CreateRole';
-import AssignUserRole from './scenes/admin/AssignUserRole';
-import Permissions from './scenes/admin/Permissions';
+
+
+
 import AdminDashboard from './scenes/admin/AdminDashboard';
  import SurveyorDashboard from './scenes/survey/SurveyDashboard.js';
  import RespondentDashboard from './scenes/Respondent/RespondentDashboard.js';
-import AccountPermissions from './scenes/admin/AccountPermissions.js';
+
 import SurveyDashboard from './scenes/Surveyor/SurveyorDashboard.js';
 import AdminSurveyDashboard from './scenes/admin/AdminSurveyDashboard.js';
 import AddQuestion from './scenes/admin/AddQuestion';
@@ -67,19 +84,39 @@ function App() {
 
         {/* Admin routes */}
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
-        <Route path="/admin/assign-user-role" element={<AssignUserRole />} />
-        <Route path="/admin/user-permissions" element={<Permissions />} />
-        <Route path="/admin/create-account-permissions" element={<AccountPermissions />} />
-        <Route path="/admin/createuser" element={<CreateUser />} />
         <Route path="/admin/surveydashboard" element={<AdminSurveyDashboard />} /> 
-        <Route path="/admin/addQuestion" element={<AddQuestion />} />
-        <Route path="/admin/CreateSurveyTemplate" element={<CreateSurveyTemplate />} />
+        
+        {/* usermanagement */}
+        <Route path="/admin/usermanagement" element={<AdminDashboard />} />
 
+        {/* usermanagement components */}
+        <Route path="/admin/assign-user-permissions" element={<AssignUserPermissions />} />
+        <Route path="/admin/assign-user-role" element={<AssignUserRole />} />
+        <Route path="/admin/create-account-permissions" element={<CreateAccountPermissions />} />
+        <Route path="/admin/createuser" element={<CreateUser />} />
+        <Route path="/admin/createuser" element={<CreateUserRole />} />
+
+        
+
+
+        {/* surveymanagment */}
+        <Route path="/admin/CreateSurveyTemplate" element={<CreateSurveyTemplate />} />
+        <Route path="/admin/addQuestion" element={<AddQuestion />} />
+        
+        
+        
+        
+        {/* organizations */}
         <Route path="/admin/organizations" exact element={<Organizations />} />
+        
+        
+        {/* organization management */}
         <Route path="/admin/organizations/add" element={<AddOrganization />} />
         <Route path="/admin/organizations/remove" element={<RemoveOrganization />} />
         <Route path="/admin/organizations/edit" element={<EditOrganization />} />
 
+
+        
 
 
         {/* Surveyor routes */}
