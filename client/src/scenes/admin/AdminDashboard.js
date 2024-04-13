@@ -74,7 +74,7 @@ import '../../global.css';
 // import { useNavigate } from 'react-router-dom';
 import AdminSideBar from '../../components/AdminSideBar';
 import { StyledButton } from '../../components/AdminSideBar/styles'; // Import your button styles
-
+import { updateBackgroundColor } from '../../components/Background/UpdateBackground';
 
 const AdminDashboard = () => {
     // const navigate = useNavigate();
@@ -83,8 +83,15 @@ const AdminDashboard = () => {
     const themes = ['#121212', '#088395', '#C6DCBA', '#944E63']; // Define your color themes
 
     const changeTheme = () => {
-        console.log("Changing theme");
-        setThemeIndex((prevIndex) => (prevIndex + 1) % themes.length); // Cycle through themes
+        const colors = [
+            'var(--background-color-default)',
+            'var(--background-color-1)',
+            'var(--background-color-2)',
+            'var(--background-color-3)'
+        ];
+        const nextTheme = colors[(themeIndex + 1) % colors.length];
+        updateBackgroundColor(nextTheme);
+        setThemeIndex((prevIndex) => (prevIndex + 1) % colors.length);
     };
     // Your logic here (if any)...
 
