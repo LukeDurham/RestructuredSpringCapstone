@@ -69,19 +69,29 @@
 // export default AdminDashboard;
 
 
-import React from 'react';
+import React, { useState } from 'react';
 import '../../global.css';
 // import { useNavigate } from 'react-router-dom';
 import AdminSideBar from '../../components/AdminSideBar';
+import { StyledButton } from '../../components/AdminSideBar/styles'; // Import your button styles
+
 
 const AdminDashboard = () => {
     // const navigate = useNavigate();
+    const [themeIndex, setThemeIndex] = useState(0); // State to track the current theme index
 
+    const themes = ['#121212', '#088395', '#C6DCBA', '#944E63']; // Define your color themes
+
+    const changeTheme = () => {
+        console.log("Changing theme");
+        setThemeIndex((prevIndex) => (prevIndex + 1) % themes.length); // Cycle through themes
+    };
     // Your logic here (if any)...
 
     return (
         <div>
-            <AdminSideBar />
+            <StyledButton onClick={changeTheme}>Change Theme</StyledButton> {/* Button to change theme */}
+            <AdminSideBar theme={themes[themeIndex]}/>
             {/* Additional content can go here */}
         </div>
     );
