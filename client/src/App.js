@@ -23,6 +23,8 @@ import CreateUserRole from './scenes/admin/UserManagement/components/CreateUserR
 
 
 
+import SurveyManagement from './scenes/admin/SurveyManagement/SurveyManagement.js';
+
 import AddSurveyQuestions from './scenes/survey/alterSurveys/AddSurveyQuestions';
 import CreateSurvey from './scenes/survey/alterSurveys/CreateSurvey';
 import DeleteQuestionFromSurvey from './scenes/survey/alterSurveys/DeleteQuestionFromSurvey';
@@ -86,18 +88,22 @@ function App() {
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/admin/surveydashboard" element={<AdminSurveyDashboard />} /> 
         
-        {/* usermanagement */}
-        <Route path="/admin/usermanagement" element={<AdminDashboard />} />
+
+        {/* usermanagement binding page */}
+        <Route path="/admin/usermanagement" element={<UserManagement />} />
 
         {/* usermanagement components */}
+        
         <Route path="/admin/assign-user-permissions" element={<AssignUserPermissions />} />
         <Route path="/admin/assign-user-role" element={<AssignUserRole />} />
         <Route path="/admin/create-account-permissions" element={<CreateAccountPermissions />} />
         <Route path="/admin/createuser" element={<CreateUser />} />
-        <Route path="/admin/createuser" element={<CreateUserRole />} />
+        <Route path="/admin/createuser-role" element={<CreateUserRole />} />
 
         
 
+
+        <Route path="/admin/surveymanagement" element={<SurveyManagement />} />
 
         {/* surveymanagment */}
         <Route path="/admin/CreateSurveyTemplate" element={<CreateSurveyTemplate />} />

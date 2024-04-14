@@ -1,13 +1,9 @@
 import React, { useState } from 'react';
-import AdminAppBar from '../../../../components/AdminAppBar'; // Import the AdminAppBar component
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline'; // Add this line
-
+import '../../../../global.css';  // Ensure path correctness
+import AdminSideBar from '../../../../components/AdminSideBar'; // Import AdminSideBar
 
 const CreateUserRole = () => {
     const [roleName, setRoleName] = useState('');
-    const [mode, setMode] = useState('dark'); // Add this line
-
 
     const handleRoleNameChange = (e) => {
         setRoleName(e.target.value);
@@ -38,24 +34,20 @@ const CreateUserRole = () => {
         }
     };
 
-    const toggleColorMode = () => {
-        setMode((prev) => (prev === 'dark' ? 'light' : 'dark'));
-    };
-
     return (
-            <div>
-                <AdminAppBar mode={mode} toggleColorMode={toggleColorMode} />
-                <div className='wrapper'>
-                    <h2>Create Role</h2>
-                    <form onSubmit={handleSubmit}>
-                        <div className='input-sq-box'>
-                            <label>Role Name:</label>
-                            <input type="text" value={roleName} onChange={handleRoleNameChange} required />
-                        </div>
-                        <button type="submit">Create Role</button>
-                    </form>
-                </div>
+        <div style={{ display: 'flex' }} >
+            <AdminSideBar />
+            <div className='center-content'>
+                <h2>Create Role</h2>
+                <form onSubmit={handleSubmit}>
+                    <div className='input-sq-box'>
+                        <label>Role Name:</label>
+                        <input type="text" value={roleName} onChange={handleRoleNameChange} required />
+                    </div>
+                    <button type="submit">Create Role</button>
+                </form>
             </div>
+        </div>
     );
 };
 

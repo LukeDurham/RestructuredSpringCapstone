@@ -1,17 +1,13 @@
 import React, { useState, useEffect } from 'react';
-
-import AdminAppBar from '../../../../components/AdminAppBar'; // Import the AdminAppBar component
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline'; // Add this line
-import getLPTheme from '../../../../getLPTheme';
+import '../../../../global.css';
+import AdminSideBar from '../../../../components/AdminSideBar';
 
 const AssignUserRole = () => {
     const [roles, setRoles] = useState([]);
     const [users, setUsers] = useState([]);
+
     const [selectedUserId, setSelectedUserId] = useState('');
     const [selectedRole, setSelectedRole] = useState('');
-    const [mode, setMode] = useState('dark'); // Add this line
-    const LPtheme = createTheme(getLPTheme(mode)); // Add this line
 
     useEffect(() => {
         fetchRoles();
@@ -29,7 +25,7 @@ const AssignUserRole = () => {
         }
     };
 
-    // Fetches users from the backend and expects an array of objects with id and email
+    // Fetches users from the backend
     const fetchUsers = async () => {
         try {
             const response = await fetch('/api/users');
@@ -56,13 +52,11 @@ const AssignUserRole = () => {
             return;
         }
         try {
-            // No need to find the user just to get the email, since we now use IDs
             const response = await fetch('/api/assign_role', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                // Directly use selectedUserId and selectedRole which are IDs
                 body: JSON.stringify({ userId: selectedUserId, roleId: selectedRole }),
             });
             if (response.ok) {
@@ -76,42 +70,37 @@ const AssignUserRole = () => {
             console.error('Error assigning role:', error);
         }
     };
+    
 
-    const toggleColorMode = () => {
-        setMode((prev) => (prev === 'dark' ? 'light' : 'dark'));
-    };
 
     return (
-        <ThemeProvider theme={LPtheme}>
-            <CssBaseline />
-            <div>
-                <AdminAppBar mode={mode} toggleColorMode={toggleColorMode} />
-                <div className='wrapper'>
-                    <h2>Assign User Role</h2>
-                    <form onSubmit={handleSubmit} className="custom-form">
-                        <div className='custom-dropdown custom-dropdown-user'>
-                            <label>User Email:</label>
-                            <select value={selectedUserId} onChange={handleUserChange} required>
-                                <option value="">Select User Email</option>
-                                {users.map((user) => (
-                                    <option key={user.id} value={user.id}>{user.email}</option>
-                                ))}
-                            </select>
-                        </div>
-                        <div className='custom-dropdown custom-dropdown-role'>
-                            <label>Role:</label>
-                            <select value={selectedRole} onChange={handleRoleChange} required>
-                                <option value="">Select Role</option>
-                                {roles.map((role) => (
-                                    <option key={role.id} value={role.id}>{role.name}</option>
-                                ))}
-                            </select>
-                        </div>
-                        <button type="submit">Assign Role</button>
-                    </form>
-                </div>
+        <div style={{ display: 'flex' }}>
+            <AdminSideBar />
+            <div className={"center-content"}>
+                <h2>Assign User Role</h2>
+                <form onSubmit={handleSubmit} className="custom-form">
+                    <div className='custom-dropdown custom-dropdown-user'>
+                        <label>User Email:</label>
+                        <select value={selectedUserId} onChange={handleUserChange} required>
+                            <option value="">Select User Email</option>
+                            {users.map((user) => (
+                                <option key={user.id} value={user.id}>{user.email}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className='custom-dropdown custom-dropdown-role'>
+                        <label>Role:</label>
+                        <select value={selectedRole} onChange={handleRoleChange} required>
+                            <option value="">Select Role</option>
+                            {roles.map((role) => (
+                                <option key={role.id} value={role.id}>{role.name}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <button type="submit">Assign Role</button>
+                </form>
             </div>
-        </ThemeProvider>
+        </div>
     );
 };
 
