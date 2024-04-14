@@ -75,6 +75,7 @@ import '../../global.css';
 import AdminSideBar from '../../components/AdminSideBar';
 
 const AdminDashboard = () => {
+
     // const navigate = useNavigate();
 
     // Your logic here (if any)...
@@ -84,6 +85,8 @@ const AdminDashboard = () => {
             <AdminSideBar />
             {/* Additional content can go here */}
         </div>
+
+  
     );
 };
 
