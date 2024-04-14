@@ -1,0 +1,17 @@
+.center-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: purple;
+    /* Purple background for the entire form container */
+    color: white;
+    /* White text */
+    padding: 20px;
+    border-radius: 8px;
+    margin: 50px auto;
+    /* Center horizontally and add vertical spacing */
+    width: 1600px;
+    height: 1000px;
+    /* Height for the container */
+}

@@ -1,5 +1,5 @@
 body, .home-page {
-    background-color: #cfcfcf; /* Sets the background color */
+    background-color: #092635; /* Sets the background color */
   }
   
   .home-page {
@@ -7,6 +7,13 @@ body, .home-page {
     padding: 20px;
   }
   
+  
+
+  body {
+    background-color: #092635; /* Sets the background color */
+
+  }
+
   .logo {
     max-width: 300px; /* Adjust this value as needed to scale your image */
     width: 50%; /* You can also use percentage to make it responsive */
