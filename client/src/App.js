@@ -48,6 +48,7 @@ import Organizations from './scenes/admin/Organizations/Organizations.js';
 import AddOrganization from './scenes/admin/Organizations/AddOrganization.js';
 import RemoveOrganization from './scenes/admin/Organizations/RemoveOrganization.js';
 import EditOrganization from './scenes/admin/Organizations/EditOrganization.js';
+import RespondDash from './scenes/Respondent/RespondDash/index.js';
 
 
 function App() {
@@ -79,7 +80,8 @@ function App() {
          <Route path="/respondentDash" element={<RespondentDashboard />} />
         {<Route path="/surveyordashboard" element={<SurveyDashboard />} /> }
         
-
+        {/*this is a test route*/ }
+        {<Route path="/test" element={<RespondDash />} /> }
 
 
         {/* Admin routes */}
