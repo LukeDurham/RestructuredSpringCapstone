@@ -77,9 +77,6 @@ const SurveyManagement = () => {
                         <button style={bottomRowButtonStyle} onClick={() => handleButtonClick('Edit Survey Templates')}>
                             Edit Survey Templates
                         </button>
-                        <button style={bottomRowButtonStyle} onClick={() => handleButtonClick('Add Question Templates')}>
-                            Add Question Templates
-                        </button>
                     </div>
                 </div>
             </div>

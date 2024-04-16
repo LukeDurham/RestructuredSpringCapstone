@@ -412,6 +412,8 @@ app.post("/api/addQuestions", async (req, res) => {
 
 
 
+
+
 //create Survey Template
 
 app.post("/api/survey_templates", async (req, res) => {
@@ -465,6 +467,21 @@ app.post("/api/survey_questions", async (req, res) => {
     } catch (error) {
         console.error('Error creating survey question:', error);
         res.status(500).json({ message: 'Failed to create survey question' });
+    }
+});
+
+app.get('/api/search_questions', async (req, res) => {
+    const searchText = req.query.text; // Get search text from query parameters
+    try {
+        const queryResult = await pool.query(
+            'SELECT question_type_id, question, id FROM questions WHERE question ILIKE $1 ORDER BY id ASC',
+            [`%${searchText}%`]
+        );
+        console.log("Sending search results:", queryResult.rows); // Log what's being sent back
+        res.json(queryResult.rows);
+    } catch (err) {
+        console.error('Error executing query', err.stack);
+        res.status(500).send('Internal Server Error');
     }
 });
 

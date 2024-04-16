@@ -111,21 +111,24 @@ export const SurveyCreatorComponent = ({ setSuccessMessage, setErrorMessage }) =
         }
     };
 
-
-
-
-    const addQuestion = (type) => {
-        const defaultOptions = {
+    
+    const getDefaultOptions = (type) => {
+        const options = {
             'True or False': ['True', 'False'],
             'Likert Scale': ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
             'Multiple Choice': ['', '', ''] // Start with 3 empty options
         };
 
+        return options[type] || []; // Return the options for the type, or an empty array if not found
+    };
+
+    const addQuestion = (type) => {
         setQuestions([
             ...questions,
-            { questionText: '', options: defaultOptions[type], type: type }
+            { questionText: '', options: getDefaultOptions(type), type: type }
         ]);
     };
+
 
     const handleQuestionChange = (index, value) => {
         const newQuestions = [...questions];
@@ -149,74 +152,121 @@ export const SurveyCreatorComponent = ({ setSuccessMessage, setErrorMessage }) =
         setQuestions(questions.filter((_, index) => index !== indexToRemove));
     };
 
-    const renderQuestionInput = (q, index) => {
-        const baseStyle = {
-            padding: '10px',
-            marginBottom: '20px',
-            border: '1px solid #ccc',
-            borderRadius: '4px',
-        };
+    const handleSearchQueryChange = (index, value) => {
+        const newQuestions = [...questions];
+        newQuestions[index].searchQuery = value;
+        setQuestions(newQuestions);
+    };
 
-        // Adjust styles based on question type
-        let specificStyle = {};
-        if (q.type === 'True or False') {
-            specificStyle = { ...baseStyle, width: '300px' }; // Smallest box
-        } else if (q.type === 'Likert Scale') {
-            specificStyle = { ...baseStyle, width: '600px' }; // Wider box
-        } else if (q.type === 'Multiple Choice') {
-            specificStyle = { ...baseStyle, height: 'auto', minHeight: '200px' }; // Taller box
+    const handleSubmitSearch = async (index) => {
+        const query = questions[index].searchQuery;
+        try {
+            const response = await fetch(`/api/search_questions?text=${encodeURIComponent(query)}`, {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' },
+            });
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(`Search failed: ${errorData.message}`);
+            }
+            const data = await response.json();
+            if (data.length > 0) {
+                console.log("Search successful:", data);
+                handleAddQuestionFromSearch(data[0], index);  // Add the question from search and pass index to remove
+            } else {
+                console.log("No questions found matching the search criteria.");
+            }
+        } catch (error) {
+            console.error("Search Error:", error.message);
+            setErrorMessage(`Search error: ${error.message}`);
         }
+    };
 
+    const handleAddQuestionFromSearch = (searchResult, indexToRemove) => {
+        const { question_type_id, question } = searchResult;
+        const type = Object.keys(questionTypeToId).find(key => questionTypeToId[key] === question_type_id);
+
+        if (type) {
+            const newQuestions = questions.filter((_, index) => index !== indexToRemove);
+            const newQuestion = {
+                questionText: question, // Set the question text from the search result
+                type: type,
+                options: getDefaultOptions(type) // Now using the defined function
+            };
+            newQuestions.push(newQuestion);
+            setQuestions(newQuestions);
+        }
+    };
+
+
+
+
+    const renderQuestionInput = (q, index) => {
         switch (q.type) {
             case 'True or False':
             case 'Likert Scale':
             case 'Multiple Choice':
                 return (
-                    <div style={specificStyle}> {/* This div applies the specific styles based on the question type */}
-                        <FormControl component="fieldset" fullWidth>
-                            <FormLabel component="legend">{`Question ${index + 1}`}</FormLabel>
-                            <TextField
-                                fullWidth
-                                label="Question"
-                                variant="outlined"
-                                value={q.questionText}
-                                onChange={(e) => handleQuestionChange(index, e.target.value)}
-                            />
-                            {q.type !== 'Multiple Choice' && (
-                                <RadioGroup row>
-                                    {q.options.map((option, optionIndex) => (
-                                        <FormControlLabel key={optionIndex} value={option} control={<Radio />} label={option} />
-                                    ))}
-                                </RadioGroup>
-                            )}
-                            {q.type === 'Multiple Choice' && (
-                                <>
-                                    {q.options.map((option, optionIndex) => (
-                                        <div key={optionIndex}>
-                                            <TextField
-                                                fullWidth
-                                                label={`Option ${optionIndex + 1}`}
-                                                variant="outlined"
-                                                value={option}
-                                                onChange={(e) => handleOptionChange(index, optionIndex, e.target.value)}
-                                            />
-                                        </div>
-                                    ))}
-                                    <IconButton onClick={() => handleAddOption(index)} aria-label="add">
-                                        <AddIcon />
-                                    </IconButton>
-                                </>
-                            )}
-                            <IconButton onClick={() => handleRemoveQuestion(index)} aria-label="delete">
-                                <DeleteIcon />
-                            </IconButton>
-                        </FormControl>
-                    </div>
+                    <FormControl component="fieldset" fullWidth>
+                        <FormLabel component="legend">{`Question ${index + 1}`}</FormLabel>
+                        <TextField
+                            fullWidth
+                            label="Question"
+                            variant="outlined"
+                            value={q.questionText}
+                            onChange={(e) => handleQuestionChange(index, e.target.value)}
+                        />
+                        {q.type !== 'Multiple Choice' && (
+                            <RadioGroup row>
+                                {q.options.map((option, optionIndex) => (
+                                    <FormControlLabel key={optionIndex} value={option} control={<Radio />} label={option} />
+                                ))}
+                            </RadioGroup>
+                        )}
+                        {q.type === 'Multiple Choice' && (
+                            <>
+                                {q.options.map((option, optionIndex) => (
+                                    <div key={optionIndex}>
+                                        <TextField
+                                            fullWidth
+                                            label={`Option ${optionIndex + 1}`}
+                                            variant="outlined"
+                                            value={option}
+                                            onChange={(e) => handleOptionChange(index, optionIndex, e.target.value)}
+                                        />
+                                        <IconButton onClick={() => handleAddOption(index)} aria-label="add">
+                                            <AddIcon />
+                                        </IconButton>
+                                    </div>
+                                ))}
+                            </>
+                        )}
+                        <IconButton onClick={() => handleRemoveQuestion(index)} aria-label="delete">
+                            <DeleteIcon />
+                        </IconButton>
+                    </FormControl>
+                );
+            case 'Add Existing Question':
+                return (
+                    <FormControl fullWidth>
+                        <FormLabel>{`Search Existing Question ${index + 1}`}</FormLabel>
+                        <TextField
+                            label="Search"
+                            variant="outlined"
+                            value={q.searchQuery}
+                            onChange={(e) => handleSearchQueryChange(index, e.target.value)}
+                        />
+                        <Button onClick={() => handleSubmitSearch(index)}>Submit Search</Button>
+                        <IconButton onClick={() => handleRemoveQuestion(index)} aria-label="delete">
+                            <DeleteIcon />
+                        </IconButton>
+                    </FormControl>
                 );
             default:
                 return null;
         }
     };
+
 
 
     return (

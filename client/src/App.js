@@ -52,12 +52,6 @@ import RemoveOrganization from './scenes/admin/Organizations/RemoveOrganization.
 import EditOrganization from './scenes/admin/Organizations/EditOrganization.js';
 
 
-import Organizations from './scenes/admin/Organizations/Organizations.js';
-import AddOrganization from './scenes/admin/Organizations/AddOrganization.js';
-import RemoveOrganization from './scenes/admin/Organizations/RemoveOrganization.js';
-import EditOrganization from './scenes/admin/Organizations/EditOrganization.js';
-
-
 function App() {
   const [backendData, setBackendData] = useState(null);
   const [loading, setLoading] = useState(true);
