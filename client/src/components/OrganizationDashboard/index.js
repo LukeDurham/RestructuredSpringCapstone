@@ -5,6 +5,8 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { CardContent, Typography } from '@mui/material';
 import getLPTheme from '../../getLPTheme'; // Adjust import path as needed
 import AdminAppBar from '../AdminAppBar'; // Adjust import path as needed
+
+
 import { StyledCard } from './styles'; // Import the StyledCard from styles.js
 
 const OrganizationDashboard = () => {

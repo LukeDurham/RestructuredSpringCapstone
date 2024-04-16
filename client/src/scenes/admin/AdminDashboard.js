@@ -77,6 +77,7 @@ import { StyledButton } from '../../components/AdminSideBar/styles'; // Import y
 import { updateBackgroundColor } from '../../components/Background/UpdateBackground';
 
 const AdminDashboard = () => {
+
     // const navigate = useNavigate();
     const [themeIndex, setThemeIndex] = useState(0); // State to track the current theme index
 
@@ -101,6 +102,8 @@ const AdminDashboard = () => {
             <AdminSideBar theme={themes[themeIndex]}/>
             {/* Additional content can go here */}
         </div>
+
+  
     );
 };
 

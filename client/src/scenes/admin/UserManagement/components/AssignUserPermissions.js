@@ -1,39 +1,37 @@
 import React, { useState, useEffect } from 'react';
-import AdminAppBar from '../../../../components/AdminAppBar'; // Import the AdminAppBar component
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline'; // Add this line
-import getLPTheme from '../../../../getLPTheme';
+import '../../../../global.css';
+import AdminSideBar from '../../../../components/AdminSideBar'; // Import AdminSideBar instead of AdminAppBar
 
 const AssignUserPermissions = () => {
     const [roles, setRoles] = useState([]);
     const [users, setUsers] = useState([]);
     const [selectedUserId, setSelectedUserId] = useState('');
     const [selectedRole, setSelectedRole] = useState('');
-    const [mode, setMode] = useState('dark'); // Add this line
-    const LPtheme = createTheme(getLPTheme(mode)); // Add this line
 
     useEffect(() => {
         fetchRoles();
         fetchUsers();
     }, []);
 
-    // Fetches roles from the backend
     const fetchRoles = async () => {
         try {
             const response = await fetch('/api/roles');
-            const data = await response.json();
-            setRoles(data.roles || []);
+            if (response.ok) {
+                const data = await response.json();
+                setRoles(data.roles || []);
+            }
         } catch (error) {
             console.error('Error fetching roles:', error);
         }
     };
 
-    // Fetches users from the backend and expects an array of objects with id and email
     const fetchUsers = async () => {
         try {
             const response = await fetch('/api/users');
-            const data = await response.json();
-            setUsers(data || []); // Update based on the actual response structure
+            if (response.ok) {
+                const data = await response.json();
+                setUsers(data || []);
+            }
         } catch (error) {
             console.error('Error fetching users:', error);
         }
@@ -47,7 +45,6 @@ const AssignUserPermissions = () => {
         setSelectedRole(e.target.value);
     };
 
-    // Handles submitting the form to assign a role to a user
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!selectedUserId || !selectedRole) {
@@ -55,13 +52,11 @@ const AssignUserPermissions = () => {
             return;
         }
         try {
-            // No need to find the user just to get the email, since we now use IDs
             const response = await fetch('/api/assign_role', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                // Directly use selectedUserId and selectedRole which are IDs
                 body: JSON.stringify({ userId: selectedUserId, roleId: selectedRole }),
             });
             if (response.ok) {
@@ -76,41 +71,49 @@ const AssignUserPermissions = () => {
         }
     };
 
-    const toggleColorMode = () => {
-        setMode((prev) => (prev === 'dark' ? 'light' : 'dark'));
+    // Style object for the centering and background
+    const centerContentStyle = {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'purple', // Purple background for the entire form container
+        color: 'white', // White text
+        padding: '20px',
+        borderRadius: '8px',
+        margin: '50px auto', // Center horizontally and add vertical spacing
+        width: '1600px',
+        height: '1000px', // Max width for better control
     };
 
     return (
-        <ThemeProvider theme={LPtheme}>
-            <CssBaseline />
-            <div>
-                <AdminAppBar mode={mode} toggleColorMode={toggleColorMode} />
-                <div className='wrapper'>
-                    <h2>Assign User Role</h2>
-                    <form onSubmit={handleSubmit} className='custom-form'>
-                        <div className='custom-dropdown custom-dropdown-user'>
-                            <label>User Email:</label>
-                            <select value={selectedUserId} onChange={handleUserChange} required>
-                                <option value="">Select User Email</option>
-                                {users.map((user) => (
-                                    <option key={user.id} value={user.id}>{user.email}</option>
-                                ))}
-                            </select>
-                        </div>
-                        <div className='custom-dropdown custom-dropdown-user'>
-                            <label>Role:</label>
-                            <select value={selectedRole} onChange={handleRoleChange} required>
-                                <option value="">Select Role</option>
-                                {roles.map((role) => (
-                                    <option key={role.id} value={role.id}>{role.name}</option> // Display name, but value is the ID
-                                ))}
-                            </select>
-                        </div>
-                        <button type="submit">Assign Role</button>
-                    </form>
-                </div>
+        <div style={{ display: 'flex' }}>
+            <AdminSideBar />
+            <div className={"center-content"}>
+                <h2>Assign User Permissions</h2>
+                <form onSubmit={handleSubmit} className='custom-form'>
+                    <div className='custom-dropdown custom-dropdown-user'>
+                        <label>User Email:</label>
+                        <select value={selectedUserId} onChange={handleUserChange} required>
+                            <option value="">Select User Email</option>
+                            {users.map((user) => (
+                                <option key={user.id} value={user.id}>{user.email}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className='custom-dropdown custom-dropdown-role'>
+                        <label>Role:</label>
+                        <select value={selectedRole} onChange={handleRoleChange} required>
+                            <option value="">Select Role</option>
+                            {roles.map((role) => (
+                                <option key={role.id} value={role.id}>{role.name}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <button type="submit">Assign Role</button>
+                </form>
             </div>
-        </ThemeProvider>
+        </div>
     );
 };
 
