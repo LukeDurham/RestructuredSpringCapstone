@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import SurveyCreatorWidget from "../../../components/SurveyCreator"; // Adjust path as needed
+import SurveyCreatorWidget from "../../../components/SurveyTemplateCreator"; // Adjust path as needed
 
 const CreateSurveyTemplate = () => {
     const [successMessage, setSuccessMessage] = useState('');
@@ -7,7 +7,7 @@ const CreateSurveyTemplate = () => {
 
     return (
         <div style={{ padding: '10px 0' }}>
-            <h1 style={{ margin: '0 0 20px 0', textAlign: 'center' }}>Survey Creator</h1>
+            <h1 style={{ margin: '0 0 20px 0', textAlign: 'center' }}>Survey Template Creator</h1>
             {successMessage && <div className="success-message">{successMessage}</div>}
             {errorMessage && <div className="error-message">{errorMessage}</div>}
             <SurveyCreatorWidget

@@ -1,10 +1,29 @@
-// AuthContext.js
 import React, { createContext, useContext, useState } from 'react';
-import { login, isAdminUser } from './authentication'; // Adjust the import path
 
 const AuthContext = createContext();
 
 export const useAuth = () => useContext(AuthContext);
+
+const login = async (username, password) => {
+    const LOGIN_URL = `/api/login`;
+    console.log('Attempting login for:', username, password);
+
+    const response = await fetch(LOGIN_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json();
+        console.log('Login error:', errorData);
+        throw new Error(errorData.message || 'Unknown login error');
+    }
+
+    const responseData = await response.json();
+    console.log('Login successful:', responseData);
+    return responseData;
+};
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
@@ -13,24 +32,25 @@ export const AuthProvider = ({ children }) => {
     const handleLogin = async (username, password) => {
         try {
             const userData = await login(username, password);
-            const isAdmin = await isAdminUser(userData.userId);
             setUser({
-                ...userData,
-                isAdmin
+                userId: userData.userId,
+                username: userData.username,
+                isAdmin: userData.roles.isAdmin,
+                isSurveyor: userData.roles.isSurveyor,
+                isRespondent: userData.roles.isRespondent
             });
-            setError(''); // Clear any previous errors
+            setError('');
         } catch (error) {
-            console.error("Login Error:", error);
+            console.error("Login Error:", error.message);
             setError(error.message);
             setUser(null);
         }
     };
 
     const logout = () => {
-        setUser(null); // Clear user state
+        setUser(null);
     };
 
-    // Provide the logged-in user, any error information, and the login/logout functions to the rest of your app
     const value = {
         user,
         error,

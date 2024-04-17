@@ -8,7 +8,8 @@ import FormLabel from '@mui/material/FormLabel';
 import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add'; // For adding multiple choice options
 import DeleteIcon from '@mui/icons-material/Delete';
-import Sidebar from '../Sidebar';
+import CSSidebar from '../CSSidebar';
+import ConfirmationModal from '../ConfirmationModal';
 import { SurveyContainer, QuestionContainer } from './styles';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
@@ -26,17 +27,24 @@ const questionTypeToId = {
 
 export const SurveyCreatorComponent = ({ setSuccessMessage, setErrorMessage }) => {
     const [questions, setQuestions] = useState([]);
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [templates, setTemplates] = useState([
+        { searchQuery: '' }, // Make sure all templates at least have a searchQuery property
+    ]);
+    const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
+    const [pendingQuestions, setPendingQuestions] = useState([]);
     const [templateName, setTemplateName] = useState('');
-    const [submitError, setSubmitError] = useState(''); // If you decide to use it, uncomment
     const [templateDescription, setTemplateDescription] = useState('');
     const { user } = useAuth();
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [searchData, setSearchData] = useState([]);
+    //for creating survey off of survey import
+    const [surveyData, setSurveyData] = useState({
+  surveyTemplateId: null,
+  questions: []
+});
 
 
 
-    const openSubmitDialog = () => {
-        setIsDialogOpen(true);
-    };
 
     const handleSubmitSurvey = async () => {
         setIsDialogOpen(false);
@@ -112,20 +120,23 @@ export const SurveyCreatorComponent = ({ setSuccessMessage, setErrorMessage }) =
     };
 
 
-
-
-    const addQuestion = (type) => {
-        const defaultOptions = {
+    const getDefaultOptions = (type) => {
+        const options = {
             'True or False': ['True', 'False'],
             'Likert Scale': ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
             'Multiple Choice': ['', '', ''] // Start with 3 empty options
         };
 
+        return options[type] || []; // Return the options for the type, or an empty array if not found
+    };
+
+    const addQuestion = (type) => {
         setQuestions([
             ...questions,
-            { questionText: '', options: defaultOptions[type], type: type }
+            { questionText: '', options: getDefaultOptions(type), type: type }
         ]);
     };
+
 
     const handleQuestionChange = (index, value) => {
         const newQuestions = [...questions];
@@ -149,69 +160,194 @@ export const SurveyCreatorComponent = ({ setSuccessMessage, setErrorMessage }) =
         setQuestions(questions.filter((_, index) => index !== indexToRemove));
     };
 
-    const renderQuestionInput = (q, index) => {
-        const baseStyle = {
-            padding: '10px',
-            marginBottom: '20px',
-            border: '1px solid #ccc',
-            borderRadius: '4px',
-        };
+    const handleSearchQueryChange = (index, value) => {
+        const newQuestions = [...questions];
+        newQuestions[index].searchQuery = value;
+        setQuestions(newQuestions);
+    };
 
-        // Adjust styles based on question type
-        let specificStyle = {};
-        if (q.type === 'True or False') {
-            specificStyle = { ...baseStyle, width: '300px' }; // Smallest box
-        } else if (q.type === 'Likert Scale') {
-            specificStyle = { ...baseStyle, width: '600px' }; // Wider box
-        } else if (q.type === 'Multiple Choice') {
-            specificStyle = { ...baseStyle, height: 'auto', minHeight: '200px' }; // Taller box
+    const handleSubmitSearch = async (index) => {
+        const query = questions[index].searchQuery;
+        try {
+            const response = await fetch(`/api/search_questions?text=${encodeURIComponent(query)}`, {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' },
+            });
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(`Search failed: ${errorData.message}`);
+            }
+            const data = await response.json();
+            if (data.length > 0) {
+                console.log("Search successful:", data);
+                handleAddQuestionFromSearch(data[0], index);  // Add the question from search and pass index to remove
+            } else {
+                console.log("No questions found matching the search criteria.");
+            }
+        } catch (error) {
+            console.error("Search Error:", error.message);
+            setErrorMessage(`Search error: ${error.message}`);
         }
+    };
 
+
+
+    
+
+    const openSubmitDialog = () => {
+        setIsDialogOpen(true);
+    };
+
+
+
+    
+
+
+    const handleAddQuestionFromSearch = (searchResult, indexToRemove) => {
+        const { question_type_id, question } = searchResult;
+        const type = Object.keys(questionTypeToId).find(key => questionTypeToId[key] === question_type_id);
+
+        if (type) {
+            const newQuestions = questions.filter((_, index) => index !== indexToRemove);
+            const newQuestion = {
+                questionText: question, // Set the question text from the search result
+                type: type,
+                options: getDefaultOptions(type) // Now using the defined function
+            };
+            newQuestions.push(newQuestion);
+            setQuestions(newQuestions);
+        }
+    };
+
+
+    //import survey template
+
+    const handleImportQuestionsFromTemplate = (templateQuestions) => {
+        const importedQuestions = templateQuestions.map(q => {
+            const typeKey = Object.keys(questionTypeToId).find(key => questionTypeToId[key] === q.question_type_id);
+            if (!typeKey) {
+                console.error("Invalid question type ID:", q.question_type_id);
+                return null;
+            }
+            return {
+                questionText: q.question,  // Set the question text from the search result
+                options: getDefaultOptions(typeKey),  // Get default options based on the type
+                type: typeKey  // Set the type using the reverse lookup from ID to type string
+            };
+        }).filter(q => q !== null);  // Filter out any undefined entries due to invalid type IDs
+
+        setQuestions(importedQuestions);  // Set the imported questions into state
+    };
+
+    const handleSubmitTemplateImport = async (index) => {
+        const query = questions[index].searchQuery;
+        try {
+            const response = await fetch(`/api/search_templates?text=${encodeURIComponent(query)}`, {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' },
+            });
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(`Template search failed: ${errorData.message}`);
+            }
+            const templates = await response.json();
+            if (templates.length > 0) {
+                console.log("Template search successful:", templates);
+                setPendingQuestions(templates);
+                setConfirmModalOpen(true);  // Open confirmation modal
+            } else {
+                console.log("No templates found matching the search criteria.");
+                setErrorMessage("No templates found matching the search criteria.");
+            }
+        } catch (error) {
+            console.error("Template Import Error:", error.message);
+            setErrorMessage(`Template import error: ${error.message}`);
+        }
+    };
+
+
+
+
+    
+
+
+
+    const renderQuestionInput = (q, index) => {
         switch (q.type) {
             case 'True or False':
             case 'Likert Scale':
             case 'Multiple Choice':
                 return (
-                    <div style={specificStyle}> {/* This div applies the specific styles based on the question type */}
-                        <FormControl component="fieldset" fullWidth>
-                            <FormLabel component="legend">{`Question ${index + 1}`}</FormLabel>
-                            <TextField
-                                fullWidth
-                                label="Question"
-                                variant="outlined"
-                                value={q.questionText}
-                                onChange={(e) => handleQuestionChange(index, e.target.value)}
-                            />
-                            {q.type !== 'Multiple Choice' && (
-                                <RadioGroup row>
-                                    {q.options.map((option, optionIndex) => (
-                                        <FormControlLabel key={optionIndex} value={option} control={<Radio />} label={option} />
-                                    ))}
-                                </RadioGroup>
-                            )}
-                            {q.type === 'Multiple Choice' && (
-                                <>
-                                    {q.options.map((option, optionIndex) => (
-                                        <div key={optionIndex}>
-                                            <TextField
-                                                fullWidth
-                                                label={`Option ${optionIndex + 1}`}
-                                                variant="outlined"
-                                                value={option}
-                                                onChange={(e) => handleOptionChange(index, optionIndex, e.target.value)}
-                                            />
-                                        </div>
-                                    ))}
-                                    <IconButton onClick={() => handleAddOption(index)} aria-label="add">
-                                        <AddIcon />
-                                    </IconButton>
-                                </>
-                            )}
-                            <IconButton onClick={() => handleRemoveQuestion(index)} aria-label="delete">
-                                <DeleteIcon />
-                            </IconButton>
-                        </FormControl>
-                    </div>
+                    <FormControl component="fieldset" fullWidth>
+                        <FormLabel component="legend">{`Question ${index + 1}`}</FormLabel>
+                        <TextField
+                            fullWidth
+                            label="Question"
+                            variant="outlined"
+                            value={q.questionText}
+                            onChange={(e) => handleQuestionChange(index, e.target.value)}
+                        />
+                        {q.type !== 'Multiple Choice' && (
+                            <RadioGroup row>
+                                {q.options.map((option, optionIndex) => (
+                                    <FormControlLabel key={optionIndex} value={option} control={<Radio />} label={option} />
+                                ))}
+                            </RadioGroup>
+                        )}
+                        {q.type === 'Multiple Choice' && (
+                            <>
+                                {q.options.map((option, optionIndex) => (
+                                    <div key={optionIndex}>
+                                        <TextField
+                                            fullWidth
+                                            label={`Option ${optionIndex + 1}`}
+                                            variant="outlined"
+                                            value={option}
+                                            onChange={(e) => handleOptionChange(index, optionIndex, e.target.value)}
+                                        />
+                                        <IconButton onClick={() => handleAddOption(index)} aria-label="add">
+                                            <AddIcon />
+                                        </IconButton>
+                                    </div>
+                                ))}
+                            </>
+                        )}
+                        <IconButton onClick={() => handleRemoveQuestion(index)} aria-label="delete">
+                            <DeleteIcon />
+                        </IconButton>
+                    </FormControl>
+                );
+            case 'Add Existing Question':
+                return (
+                    <FormControl fullWidth>
+                        <FormLabel>{`Search Existing Question ${index + 1}`}</FormLabel>
+                        <TextField
+                            label="Search"
+                            variant="outlined"
+                            value={q.searchQuery}
+                            onChange={(e) => handleSearchQueryChange(index, e.target.value)}
+                        />
+                        <Button onClick={() => handleSubmitSearch(index)}>Submit Search</Button>
+                        <IconButton onClick={() => handleRemoveQuestion(index)} aria-label="delete">
+                            <DeleteIcon />
+                        </IconButton>
+                    </FormControl>
+                );
+            case 'Import Survey Template':
+                return (
+                    <FormControl fullWidth>
+                        <FormLabel>{`Import Survey Template ${index + 1}`}</FormLabel>
+                        <TextField
+                            label="Search"
+                            variant="outlined"
+                            value={q.searchQuery}
+                            onChange={(e) => handleSearchQueryChange(index, e.target.value)}
+                        />
+                        <Button onClick={() => handleSubmitTemplateImport(index)}>Import Template</Button>
+                        <IconButton onClick={() => handleRemoveQuestion(index)} aria-label="delete">
+                            <DeleteIcon />
+                        </IconButton>
+                    </FormControl>
                 );
             default:
                 return null;
@@ -219,9 +355,10 @@ export const SurveyCreatorComponent = ({ setSuccessMessage, setErrorMessage }) =
     };
 
 
+
     return (
         <div style={{ display: 'flex', flexDirection: 'row' }}>
-            <Sidebar onAddQuestion={addQuestion} />
+            <CSSidebar onAddQuestion={addQuestion} />
             <SurveyContainer>
                 {questions.map((q, index) => (
                     <QuestionContainer key={index}>
@@ -229,19 +366,17 @@ export const SurveyCreatorComponent = ({ setSuccessMessage, setErrorMessage }) =
                     </QuestionContainer>
                 ))}
                 {questions.length > 0 && (
-                    <Button variant="contained" onClick={openSubmitDialog}>Submit Survey Template</Button>
+                    <Button variant="contained" onClick={openSubmitDialog}>Submit Survey </Button>
                 )}
-                {/* Render the submission error message if present */}
-                {submitError && <p className="error">{submitError}</p>}
             </SurveyContainer>
             <Dialog open={isDialogOpen} onClose={() => setIsDialogOpen(false)}>
-                <DialogTitle>Submit Survey Template</DialogTitle>
+                <DialogTitle>Submit Survey</DialogTitle>
                 <DialogContent>
                     <TextField
                         autoFocus
                         margin="dense"
                         id="name"
-                        label="Template Name"
+                        label="Survey Name"
                         type="text"
                         fullWidth
                         variant="outlined"
@@ -251,7 +386,7 @@ export const SurveyCreatorComponent = ({ setSuccessMessage, setErrorMessage }) =
                     <TextField
                         margin="dense"
                         id="description"
-                        label="Template Description"
+                        label="Survey Description"
                         type="text"
                         fullWidth
                         multiline
@@ -266,6 +401,14 @@ export const SurveyCreatorComponent = ({ setSuccessMessage, setErrorMessage }) =
                     <Button onClick={handleSubmitSurvey}>Submit</Button>
                 </DialogActions>
             </Dialog>
+            <ConfirmationModal
+                isOpen={isConfirmModalOpen}
+                onClose={() => setConfirmModalOpen(false)}
+                onConfirm={() => {
+                    handleImportQuestionsFromTemplate(pendingQuestions);
+                    setConfirmModalOpen(false); // Optionally close modal after confirm
+                }}
+            />
         </div>
     );
 };

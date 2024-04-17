@@ -26,7 +26,6 @@ import CreateUserRole from './scenes/admin/UserManagement/components/CreateUserR
 import SurveyManagement from './scenes/admin/SurveyManagement/SurveyManagement.js';
 
 import AddSurveyQuestions from './scenes/survey/alterSurveys/AddSurveyQuestions';
-import CreateSurvey from './scenes/survey/alterSurveys/CreateSurvey';
 import DeleteQuestionFromSurvey from './scenes/survey/alterSurveys/DeleteQuestionFromSurvey';
 import DisplaySurveyResults from './scenes/survey/alterSurveys/DisplaySurveyResults';
 import EmailTemplate from './scenes/survey/alterSurveys/EmailTemplate';
@@ -37,13 +36,14 @@ import AddQuestionType from './scenes/survey/alterSurveys/AddQuestionType';
 
 
 import AdminDashboard from './scenes/admin/AdminDashboard';
- import SurveyorDashboard from './scenes/survey/SurveyDashboard.js';
- import RespondentDashboard from './scenes/Respondent/RespondentDashboard.js';
+import SurveyorDashboard from './scenes/survey/SurveyDashboard.js';
+
 
 import SurveyDashboard from './scenes/Surveyor/SurveyorDashboard.js';
 import AdminSurveyDashboard from './scenes/admin/AdminSurveyDashboard.js';
 import AddQuestion from './scenes/admin/AddQuestion';
 import CreateSurveyTemplate from './scenes/admin/CreateSurveyTemplate';
+import CreateSurvey from './scenes/admin/CreateSurvey';
 import Logout from './scenes/Logout/index.js';
 
 import Organizations from './scenes/admin/Organizations/Organizations.js';
@@ -52,10 +52,8 @@ import RemoveOrganization from './scenes/admin/Organizations/RemoveOrganization.
 import EditOrganization from './scenes/admin/Organizations/EditOrganization.js';
 
 
-import Organizations from './scenes/admin/Organizations/Organizations.js';
-import AddOrganization from './scenes/admin/Organizations/AddOrganization.js';
-import RemoveOrganization from './scenes/admin/Organizations/RemoveOrganization.js';
-import EditOrganization from './scenes/admin/Organizations/EditOrganization.js';
+import RespondentDashboard from './scenes/Respondent/RespondentDashboard.js';
+import ActiveSurveys from './scenes/Respondent/ActiveSurveys';
 
 
 function App() {
@@ -84,7 +82,6 @@ function App() {
     <BrowserRouter>
       <Routes>
         {/* regular login dashboard for respondents */}
-         <Route path="/respondentDash" element={<RespondentDashboard />} />
         {<Route path="/surveyordashboard" element={<SurveyDashboard />} /> }
         
 
@@ -114,6 +111,7 @@ function App() {
         {/* surveymanagment */}
         <Route path="/admin/CreateSurveyTemplate" element={<CreateSurveyTemplate />} />
         <Route path="/admin/addQuestion" element={<AddQuestion />} />
+        <Route path="/admin/CreateSurvey" element={<CreateSurvey />} />
         
         
         
@@ -132,8 +130,9 @@ function App() {
         <Route path="/admin/organizations/remove" element={<RemoveOrganization />} />
         <Route path="/admin/organizations/edit" element={<EditOrganization />} />
 
-
-        
+        {/* Respondent routes */}
+        <Route path="/respondent/dashboard" element={<RespondentDashboard />} />
+        <Route path="/respondent/activesurveys" element={<ActiveSurveys/>} />
 
 
         {/* Surveyor routes */}
