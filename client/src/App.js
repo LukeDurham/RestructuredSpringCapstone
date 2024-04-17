@@ -59,7 +59,8 @@ import EditProject from './scenes/admin/ProjectManagement/components/EditProject
 
 
 import RespondentDashboard from './scenes/Respondent/RespondentDashboard.js';
-import ActiveSurveys from './scenes/Respondent/ActiveSurveys';
+import ActiveSurveys from './scenes/Respondent/components/ActiveSurveys';
+import TakeSurvey from './scenes/Respondent/components/TakeSurvey';
 
 
 function App() {
@@ -148,6 +149,7 @@ function App() {
         {/* Respondent routes */}
         <Route path="/respondent/dashboard" element={<RespondentDashboard />} />
         <Route path="/respondent/activesurveys" element={<ActiveSurveys/>} />
+        <Route path="/TakeSurvey/:surveyId" element={<TakeSurvey />} />
 
 
         {/* Surveyor routes */}

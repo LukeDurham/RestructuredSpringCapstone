@@ -739,6 +739,53 @@ app.get("/api/projects", async (req, res) => {
     }
 });
 
+app.get("/api/active_surveys", async (req, res) => {
+    try {
+        // Adjusted query to fetch 'name' as 'title' from 'survey_templates'
+        const sqlQuery = `
+            SELECT s.id, t.name AS title, t.description 
+            FROM surveys s
+            INNER JOIN survey_templates t ON s.survey_template_id = t.id
+            WHERE s."isActive" = true;
+        `;
+        const { rows } = await pool.query(sqlQuery);
+        res.json(rows);
+    } catch (error) {
+        console.error('Error fetching active surveys with template details', error);
+        res.status(500).send('Server error');
+    }
+});
+
+
+
+app.get('/api/surveys/:surveyId/questions', async (req, res) => {
+    try {
+        const surveyId = req.params.surveyId;
+
+        // SQL to fetch questions related to a specific survey
+        const query = `
+            SELECT q.id, q.question, q.question_type_id, stq.description
+            FROM surveys s
+            JOIN survey_templates st ON s.survey_template_id = st.id
+            JOIN survey_template_questions stq ON st.id = stq.survey_template_id
+            JOIN questions q ON stq.question_id = q.id
+            WHERE s.id = $1;
+        `;
+
+        const { rows } = await pool.query(query, [surveyId]);
+        console.log('Sending data to frontend:', rows); // Log the data being sent
+        res.json(rows);
+    } catch (error) {
+        console.error('Failed to fetch survey questions:', error);
+        res.status(500).send('Server error');
+    }
+});
+
+
+
+
+
+
 
 
 //3/25/24 Made a permission api to create the perismission for role

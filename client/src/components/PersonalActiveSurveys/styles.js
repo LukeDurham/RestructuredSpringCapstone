@@ -1,30 +1,29 @@
-// PersonalActiveSurveys.styles.js
 import styled from 'styled-components';
 
-export const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background-color: #1F1B24; // Set to dark color as specified
-  color: white; // Set text color to white
-  padding: 20px;
-  border-radius: 8px;
-  width: 33.3%; // Set width to 1/3 of its current size
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  margin: 0 auto; // Center the container
+const SurveyContainer = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); // Adjust minmax as needed for size
+  gap: 20px; // Spacing between boxes
+  padding: 20px; // Padding around the grid
+  margin-left: 10%; // Account for sidebar
+  width: 90%; // Remaining space
 `;
 
-export const Title = styled.h1`
-  color: white; // Ensure text is white
-  font-size: 24px;
-  margin-bottom: 20px; // Add some space below the title
-`;
-
-export const SurveysList = styled.div`
-  width: 100%; // Ensure it takes full container width
+const SurveyBox = styled.div`
+  background-color: purple; // Purple background as per the button example
+  color: white; // White text
+  padding: 10px 20px;
+  border-radius: 8px; // Rounded corners
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
+  align-items: center; // Center content horizontally
+  justify-content: center; // Center content vertically
+  cursor: pointer; // Pointer on hover
+  transition: transform 0.3s; // Smooth transform effect on hover
+
+  &:hover {
+    transform: scale(1.05); // Slightly enlarge on hover
+  }
 `;
+
+export { SurveyContainer, SurveyBox };

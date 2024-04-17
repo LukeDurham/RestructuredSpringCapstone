@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { SurveyContainer, SurveyBox } from './styles';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { SurveyContainer, SurveyBox, Title, TakeSurveyButton } from './styles';
 
 const PersonalActiveSurveys = () => {
     const [surveys, setSurveys] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
+    const navigate = useNavigate(); // Create a navigate function instance
 
     useEffect(() => {
         const fetchSurveys = async () => {
@@ -25,15 +27,20 @@ const PersonalActiveSurveys = () => {
         fetchSurveys();
     }, []);
 
+    // Function to handle the redirection
+    const handleTakeSurvey = (surveyId) => {
+        navigate(`/TakeSurvey/${surveyId}`); // Navigate to TakeSurvey page with the surveyId using navigate function
+    };
+
     return (
         <>
             {isLoading && <p>Loading...</p>}
             {error && <p>Error: {error}</p>}
             <SurveyContainer>
                 {surveys.map((survey) => (
-                    <SurveyBox key={survey.id} onClick={() => console.log('Survey clicked', survey.id)}>
-                        <h3>{survey.title}</h3>
-                        <p>{survey.description}</p>
+                    <SurveyBox key={survey.id} onClick={() => handleTakeSurvey(survey.id)}>
+                        <Title>{survey.title}</Title>
+                        <TakeSurveyButton>Take Survey</TakeSurveyButton> {/* Button for taking the survey */}
                     </SurveyBox>
                 ))}
             </SurveyContainer>
