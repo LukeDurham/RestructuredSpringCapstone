@@ -141,29 +141,27 @@ app.post('/api/login', async (req, res) => {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
 
-        // Fetch user roles based on user_id
-        const rolesResult = await pool.query('SELECT role_id FROM user_roles WHERE user_id = $1', [user.id]);
-        const roles = rolesResult.rows.map(row => row.role_id);
+        // Fetch the first role for the user
+        const roleResult = await pool.query('SELECT role_id FROM user_roles WHERE user_id = $1 LIMIT 1', [user.id]);
+        if (roleResult.rows.length === 0) {
+            return res.status(401).json({ error: 'No roles found for user' });
+        }
 
-        // Map role_id to roles
-        const rolesInfo = {
-            isAdmin: roles.includes(1),
-            isSurveyor: roles.includes(2),
-            isRespondent: roles.includes(3)
-        };
+        const roleId = roleResult.rows[0].role_id;
 
-        const responsePayload = { userId: user.id, username, roles: rolesInfo };
+        const responsePayload = { userId: user.id, roleId };
 
         // Log the response payload to console before sending it
         console.log('Sending login response:', responsePayload);
 
-        // Respond with user info and roles
+        // Respond with user info and role id
         res.json(responsePayload);
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
+
 
 
 //protected routes for Admin
@@ -506,7 +504,8 @@ app.get('/api/search_templates', async (req, res) => {
         );
 
         if (templateQuery.rows.length > 0) {
-            const template = templateQuery.rows[0]; // Assuming you want to work with the first result
+            const template = templateQuery.rows[0];
+            console.log("Template search successful:", template.id); // Assuming you want to work with the first result
             const questionsQuery = await pool.query(
                 'SELECT q.* FROM survey_template_questions stq ' +
                 'JOIN questions q ON stq.question_id = q.id ' +
@@ -514,22 +513,25 @@ app.get('/api/search_templates', async (req, res) => {
                 [template.id]
             );
 
-            if (questionsQuery.rows.length > 0) {
-                console.log("Found questions for template:", questionsQuery.rows);
-                res.json(questionsQuery.rows); // Send the related questions to the client
-            } else {
-                console.log("No questions found for this template");
-                res.status(404).send('No questions found for this template');
-            }
+            // Create a response object including the template ID and the questions
+            const response = {
+                templateId: template.id, // Include the ID of the template
+                templateName: template.name, // Include the name of the template
+                questions: questionsQuery.rows // Include the associated questions
+            };
+
+            console.log("Found questions for template:", questionsQuery.rows);
+            res.json(response); // Send the response object to the client
         } else {
             console.log("Survey template not found");
             res.status(404).send('Survey template not found');
         }
     } catch (err) {
         console.error('Error executing query', err.stack);
-        res.status(500).send('Internal Server Error');
+        res.status(500).json({ message: 'Internal Server Error' }); // Send error as JSON
     }
 });
+
 
 
 

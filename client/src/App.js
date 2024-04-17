@@ -35,12 +35,12 @@ import AddQuestionType from './scenes/survey/alterSurveys/AddQuestionType';
 
 
 
+
 import AdminDashboard from './scenes/admin/AdminDashboard';
 import SurveyorDashboard from './scenes/survey/SurveyDashboard.js';
 
 
 import SurveyDashboard from './scenes/Surveyor/SurveyorDashboard.js';
-import AdminSurveyDashboard from './scenes/admin/AdminSurveyDashboard.js';
 import AddQuestion from './scenes/admin/AddQuestion';
 import CreateSurveyTemplate from './scenes/admin/CreateSurveyTemplate';
 import CreateSurvey from './scenes/admin/CreateSurvey';
@@ -88,8 +88,7 @@ function App() {
 
 
         {/* Admin routes */}
-        <Route path="/admin/dashboard" element={<AdminDashboard />} />
-        <Route path="/admin/surveydashboard" element={<AdminSurveyDashboard />} /> 
+        <Route path="/admin/dashboard" element={<AdminDashboard />} /> 
         
 
         {/* usermanagement binding page */}
@@ -142,22 +141,23 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/logout" element={<Logout />} />
-
         <Route path="/about" element={<About />} />
-        {/* <Route path="/survey" element={<Survey />} /> */}
-        {/* <Route path="/surveydashboard" element={<SurveyDashboard />} /> */}
-        <Route path="/add-survey-questions" element={<AddSurveyQuestions />} />
-        <Route path="/create-survey" element={<CreateSurvey />} />
-        <Route path="/add-question-type" element={<AddQuestionType />} />
-        <Route path="/delete-question-from-survey" element={<DeleteQuestionFromSurvey />} />
-        <Route path="/display-survey-results" element={<DisplaySurveyResults />} />
-        <Route path="/email-template" element={<EmailTemplate />} />
-        <Route path="/survey-types" element={<SurveyTypes />} />
-        {/* <Route path="/createrole" element={<CreateRole />} />
-        <Route path="/add-survey-template" element={<AddSurveyTemplate />} /> */}
       </Routes>
     </BrowserRouter>
   );
 }
 
 export default App;
+
+
+{/* <Route path="/survey" element={<Survey />} />
+        <Route path="/surveydashboard" element={<SurveyDashboard />} />
+        <Route path="/add-survey-questions" element={<AddSurveyQuestions />} />
+        <Route path="/create-survey" element={<CreateSurvey />} />
+        <Route path="/add-question-type" element={<AddQuestionType />} />
+        <Route path="/delete-question-from-survey" element={<DeleteQuestionFromSurvey />} />
+        <Route path="/display-survey-results" element={<DisplaySurveyResults />} />
+        <Route path="/email-template" element={<EmailTemplate />} />
+        <Route path="/survey-types" element={<SurveyTypes />} /> */}
+{/* <Route path="/createrole" element={<CreateRole />} />
+        <Route path="/add-survey-template" element={<AddSurveyTemplate />} /> */}

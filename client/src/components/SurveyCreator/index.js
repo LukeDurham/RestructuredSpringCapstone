@@ -18,6 +18,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { useAuth } from '../../scenes/utils/AuthContext';
+import { makeStyles } from '@material-ui/core/styles';
 
 const questionTypeToId = {
     'True or False': 1,
@@ -25,99 +26,207 @@ const questionTypeToId = {
     'Multiple Choice': 3
 };
 
+const useStyles = makeStyles(theme => ({
+    dialogCustomWidth: {
+        height: '20%', // Adjust width as necessary
+        width: '30%',
+        maxWidth: 'none', // Removes the max-width restriction to allow the dialog to grow
+    },
+}));
+
+
 export const SurveyCreatorComponent = ({ setSuccessMessage, setErrorMessage }) => {
+    const classes = useStyles();
+    const [templateId, setTemplateId] = useState(null);
     const [questions, setQuestions] = useState([]);
     const [templates, setTemplates] = useState([
         { searchQuery: '' }, // Make sure all templates at least have a searchQuery property
     ]);
     const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
     const [pendingQuestions, setPendingQuestions] = useState([]);
-    const [templateName, setTemplateName] = useState('');
-    const [templateDescription, setTemplateDescription] = useState('');
+
+    // const [templateName, setTemplateName] = useState('');
+    // const [templateDescription, setTemplateDescription] = useState('');
+    const [dialogState, setDialogState] = useState({
+        templateId: 0,
+        surveyorId: null,
+        organizationId: null,
+        projectId: null,
+        created_at: null,
+        created_by: 0,
+        updated_at: null,
+        updated_by: 0,
+        deleted_at: null,
+        deleted_by: 0,
+    });
     const { user } = useAuth();
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [searchData, setSearchData] = useState([]);
     //for creating survey off of survey import
     const [surveyData, setSurveyData] = useState({
+    
   surveyTemplateId: null,
   questions: []
 });
+    //important for all survey creations
+    const [organization, setOrganization] = useState("");
+    
 
 
 
+
+//     const handleSubmitSurvey = async () => {
+//     setIsDialogOpen(false);
+
+//     // Step 1: Create Survey Template including organization information
+//     try {
+//         const templateResponse = await fetch('/api/CreatingSurveyTemplate/survey_templates', {
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'application/json',
+//             },
+//             body: JSON.stringify({
+//                 name: templateName, // Assuming you keep this field
+//                 description: templateDescription, // Assuming you keep this field
+//                 created_by: user?.id || 0, // Default to 0 if user id is not available
+//                 organization: organization || null, // Include organization info, or null if not specified
+//             }),
+//         });
+
+//         if (templateResponse.status !== 201) {
+//             const errorMsg = await templateResponse.text();
+//             throw new Error(`Failed to create survey template: ${errorMsg}`);
+//         }
+
+//         const { id: surveyTemplateId } = await templateResponse.json();
+
+//         // Step 2: Create Questions
+//         const questionsResponse = await fetch('/api/CreatingSurveyTemplate/questions', {
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'application/json',
+//             },
+//             body: JSON.stringify({
+//                 questions: questions.map(question => ({
+//                     question_type_id: questionTypeToId[question.type],
+//                     question: question.questionText,
+//                 })),
+//             }),
+//         });
+
+//         if (questionsResponse.status !== 201) {
+//             const errorMsg = await questionsResponse.text();
+//             throw new Error(`Failed to create questions: ${errorMsg}`);
+//         }
+
+//         const { questionIds } = await questionsResponse.json();
+
+//         // Step 3: Link Survey Template with Questions
+//         const linkResponse = await fetch('/api/CreatingSurveyTemplate/survey_template_questions', {
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'application/json',
+//             },
+//             body: JSON.stringify({ surveyTemplateId, questionIds }),
+//         });
+
+//         if (linkResponse.status !== 201) {
+//             const errorMsg = await linkResponse.text();
+//             throw new Error(`Failed to link survey template and questions: ${errorMsg}`);
+//         }
+
+//         console.log('Survey template and questions successfully created and linked');
+//         setSuccessMessage('Survey template and questions successfully created and linked');
+
+//         // Reset form state after successful submission
+//         setTemplateName('');
+//         setTemplateDescription('');
+//         setOrganization(''); // Reset the organization field
+//         setQuestions([]);
+
+//     } catch (error) {
+//         console.error("Error:", error);
+//         setErrorMessage(error.message);
+//     }
+// };
+
+    const resetDialogForm = () => {
+        setDialogState({
+            templateId: 0,         // Reset templateId to 0
+            surveyorId: null,      // Reset surveyorId to null
+            organizationId: null,  // Reset organizationId to null
+            projectId: null,       // Reset projectId to null
+            created_at: null,      // Reset creation timestamp
+            created_by: 0,         // Reset created_by to 0
+            updated_at: null,      // Reset update timestamp
+            updated_by: 0,         // Reset updated_by to 0
+            deleted_at: null,      // Reset deleted_at to null
+            deleted_by: 0          // Reset deleted_by to 0
+        });
+    };
 
     const handleSubmitSurvey = async () => {
         setIsDialogOpen(false);
 
-        // Step 1: Create Survey Template
         try {
-            const templateResponse = await fetch('/api/CreatingSurveyTemplate/survey_templates', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    name: templateName,
-                    description: templateDescription,
-                    created_by: user?.id || 0, // Default to 0 if user id is not available
-                }),
-            });
+            // Ensure templateId is set to 0 if it's falsy (undefined, null, etc.)
+            const safeTemplateId = templateId || 0;
 
-            if (templateResponse.status !== 201) {
-                const errorMsg = await templateResponse.text();
-                throw new Error(`Failed to create survey template: ${errorMsg}`);
-            }
+            // Proceed with further steps using safeTemplateId
+            const surveyorId = user?.userId;  // Assuming 'user' is available from context or state
 
-            const { id: surveyTemplateId } = await templateResponse.json();
+            const organizationId = dialogState?.organizationId || null;
 
-            // Step 2: Create Questions
-            const questionsResponse = await fetch('/api/CreatingSurveyTemplate/questions', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    questions: questions.map(question => ({
-                        question_type_id: questionTypeToId[question.type],
-                        question: question.questionText,
-                    })),
-                }),
-            });
+            const projectId = null; // Placeholder for future implementation
 
-            if (questionsResponse.status !== 201) {
-                const errorMsg = await questionsResponse.text();
-                throw new Error(`Failed to create questions: ${errorMsg}`);
-            }
+            const now = new Date().toISOString();
 
-            const { questionIds } = await questionsResponse.json();
+            console.log(safeTemplateId);
+            console.log(surveyorId);
+            console.log(organizationId);
+            console.log(projectId);
 
-            // Step 3: Link Survey Template with Questions
-            const linkResponse = await fetch('/api/CreatingSurveyTemplate/survey_template_questions', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ surveyTemplateId, questionIds }),
-            });
+            // Example of a POST request using safeTemplateId
+            // const linkResponse = await fetch('/api/LinkTemplateWithDetails', {
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //     },
+            //     body: JSON.stringify({
+            //         templateId: safeTemplateId,
+            //         surveyorId,
+            //         organizationId,
+            //         projectId,
+            //         created_at: now,
+            //         created_by: 0, // Default to 0 as specified
+            //         updated_at: now,
+            //         updated_by: 0,
+            //         deleted_at: null,
+            //         deleted_by: 0
+            //     }),
+            // });
 
-            if (linkResponse.status !== 201) {
-                const errorMsg = await linkResponse.text();
-                throw new Error(`Failed to link survey template and questions: ${errorMsg}`);
-            }
+            // if (linkResponse.status !== 201) {
+            //     const errorMsg = await linkResponse.text();
+            //     throw new Error(`Failed to link survey template with details: ${errorMsg}`);
+            // }
 
-            console.log('Survey template and questions successfully created and linked');
-            setSuccessMessage('Survey template and questions successfully created and linked');
+            // Success handling
+            console.log('Template and details successfully linked');
+            setSuccessMessage('Template and details successfully linked');
 
-            // Reset form state after successful submission
-            setTemplateName('');
-            setTemplateDescription('');
-            setQuestions([]);
+            // Reset form/dialog state after successful submission
+            resetDialogForm(); // Assuming this function resets all state managed in the dialog
 
         } catch (error) {
             console.error("Error:", error);
             setErrorMessage(error.message);
         }
     };
+
+
+
+
 
 
     const getDefaultOptions = (type) => {
@@ -247,13 +356,21 @@ export const SurveyCreatorComponent = ({ setSuccessMessage, setErrorMessage }) =
                 headers: { 'Content-Type': 'application/json' },
             });
             if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(`Template search failed: ${errorData.message}`);
+                // Check if the response is in JSON format
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.indexOf('application/json') !== -1) {
+                    const errorData = await response.json();
+                    throw new Error(`Template search failed: ${errorData.message}`);
+                } else {
+                    // Handle non-JSON responses or assume it's plain text
+                    const errorText = await response.text();
+                    throw new Error(`Template search failed: ${errorText}`);
+                }
             }
-            const templates = await response.json();
-            if (templates.length > 0) {
-                console.log("Template search successful:", templates);
-                setPendingQuestions(templates);
+            const data = await response.json();
+            if (data.templateId) { // Corrected from templates.length which was incorrect
+                setTemplateId(data.templateId);
+                setPendingQuestions(data.questions);
                 setConfirmModalOpen(true);  // Open confirmation modal
             } else {
                 console.log("No templates found matching the search criteria.");
@@ -264,6 +381,7 @@ export const SurveyCreatorComponent = ({ setSuccessMessage, setErrorMessage }) =
             setErrorMessage(`Template import error: ${error.message}`);
         }
     };
+
 
 
 
@@ -366,34 +484,27 @@ export const SurveyCreatorComponent = ({ setSuccessMessage, setErrorMessage }) =
                     </QuestionContainer>
                 ))}
                 {questions.length > 0 && (
-                    <Button variant="contained" onClick={openSubmitDialog}>Submit Survey </Button>
+                    <Button variant="contained" onClick={openSubmitDialog}>Submit Survey</Button>
                 )}
             </SurveyContainer>
-            <Dialog open={isDialogOpen} onClose={() => setIsDialogOpen(false)}>
+            <Dialog
+                open={isDialogOpen}
+                onClose={() => setIsDialogOpen(false)}
+                classes={{ paper: classes.dialogCustomWidth }}  // Apply custom width
+            >
                 <DialogTitle>Submit Survey</DialogTitle>
                 <DialogContent>
                     <TextField
                         autoFocus
                         margin="dense"
-                        id="name"
-                        label="Survey Name"
+                        id="organization"
+                        label="Organization"
                         type="text"
                         fullWidth
                         variant="outlined"
-                        value={templateName}
-                        onChange={(e) => setTemplateName(e.target.value)}
-                    />
-                    <TextField
-                        margin="dense"
-                        id="description"
-                        label="Survey Description"
-                        type="text"
-                        fullWidth
-                        multiline
-                        rows={4}
-                        variant="outlined"
-                        value={templateDescription}
-                        onChange={(e) => setTemplateDescription(e.target.value)}
+                        placeholder="Leave blank if not for a specific organization"
+                        value={organization}
+                        onChange={(e) => setOrganization(e.target.value)}
                     />
                 </DialogContent>
                 <DialogActions>
@@ -411,6 +522,7 @@ export const SurveyCreatorComponent = ({ setSuccessMessage, setErrorMessage }) =
             />
         </div>
     );
+
 };
 
 export default SurveyCreatorComponent;
