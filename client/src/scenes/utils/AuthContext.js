@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
+
 
 const AuthContext = createContext();
 
@@ -26,18 +27,29 @@ const login = async (username, password) => {
 };
 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState(() => {
+        // Get initial user state from localStorage if available
+        const savedUser = localStorage.getItem('user');
+        return savedUser ? JSON.parse(savedUser) : null;
+    });
+    const userRef = useRef(user); // Create a ref to hold the current user
     const [error, setError] = useState('');
+
+    useEffect(() => {
+        userRef.current = user; // Update ref on user state change
+        console.log("User state updated to:", user);
+    }, [user]);
 
     const handleLogin = async (username, password) => {
         try {
             const userData = await login(username, password);
+            localStorage.setItem('user', JSON.stringify({
+                userId: userData.userId,
+                roleId: userData.roleId
+            }));
             setUser({
                 userId: userData.userId,
-                username: userData.username,
-                isAdmin: userData.roles.isAdmin,
-                isSurveyor: userData.roles.isSurveyor,
-                isRespondent: userData.roles.isRespondent
+                roleId: userData.roleId
             });
             setError('');
         } catch (error) {
@@ -48,6 +60,8 @@ export const AuthProvider = ({ children }) => {
     };
 
     const logout = () => {
+        console.log("Executing logout function");
+        localStorage.removeItem('user');
         setUser(null);
     };
 

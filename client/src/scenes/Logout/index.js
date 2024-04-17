@@ -1,26 +1,20 @@
-// Logout.js
 import React from 'react';
-import { useAuth } from '../utils/AuthContext'; // Adjust the path as necessary
+import { useAuth } from '../utils/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
-const Logout = () => {
+const LogoutButton = () => {
   const { logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
     logout();
-    navigate('/');
-    
-    // Optionally redirect the user to the homepage or login page after logging out
-    // e.g., using history.push('/') if you're using react-router
+    console.log("Navigating to home after logout.");
+    navigate('/'); // Navigate after logout
   };
 
   return (
-    <div>
-      <h1>You are about to log out</h1>
-      <button onClick={handleLogout}>Logout</button>
-    </div>
+    <button onClick={handleLogout}>Logout</button>
   );
 };
 
-export default Logout;
+export default LogoutButton;

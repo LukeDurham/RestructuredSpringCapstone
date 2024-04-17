@@ -35,25 +35,32 @@ import AddQuestionType from './scenes/survey/alterSurveys/AddQuestionType';
 
 
 
+
 import AdminDashboard from './scenes/admin/AdminDashboard';
 import SurveyorDashboard from './scenes/survey/SurveyDashboard.js';
 
 
 import SurveyDashboard from './scenes/Surveyor/SurveyorDashboard.js';
-import AdminSurveyDashboard from './scenes/admin/AdminSurveyDashboard.js';
 import AddQuestion from './scenes/admin/AddQuestion';
 import CreateSurveyTemplate from './scenes/admin/CreateSurveyTemplate';
 import CreateSurvey from './scenes/admin/CreateSurvey';
 import Logout from './scenes/Logout/index.js';
 
-import Organizations from './scenes/admin/Organizations/Organizations.js';
-import AddOrganization from './scenes/admin/Organizations/AddOrganization.js';
-import RemoveOrganization from './scenes/admin/Organizations/RemoveOrganization.js';
-import EditOrganization from './scenes/admin/Organizations/EditOrganization.js';
+import OrganizationManagement from './scenes/admin/OrganizationManagement/OrganizationManagement.js';
+import AddOrganization from './scenes/admin/OrganizationManagement/components/AddOrganization.js';
+import RemoveOrganization from './scenes/admin/OrganizationManagement/components/RemoveOrganization.js';
+import EditOrganization from './scenes/admin/OrganizationManagement/components/EditOrganization.js';
+
+import ProjectManagement from './scenes/admin/ProjectManagement/ProjectManagement.js';
+import AddProject from './scenes/admin/ProjectManagement/components/AddProject.js';
+import RemoveProject from './scenes/admin/ProjectManagement/components/RemoveProject.js';
+import EditProject from './scenes/admin/ProjectManagement/components/EditProject.js';
+
 
 
 import RespondentDashboard from './scenes/Respondent/RespondentDashboard.js';
-import ActiveSurveys from './scenes/Respondent/ActiveSurveys';
+import ActiveSurveys from './scenes/Respondent/components/ActiveSurveys';
+import TakeSurvey from './scenes/Respondent/components/TakeSurvey';
 
 
 function App() {
@@ -88,12 +95,11 @@ function App() {
 
 
         {/* Admin routes */}
-        <Route path="/admin/dashboard" element={<AdminDashboard />} />
-        <Route path="/admin/surveydashboard" element={<AdminSurveyDashboard />} /> 
+        <Route path="/admin/dashboard" element={<AdminDashboard />} /> 
         
 
         {/* usermanagement binding page */}
-        <Route path="/admin/usermanagement" element={<UserManagement />} />
+        <Route path="/admin/user_management" element={<UserManagement />} />
 
         {/* usermanagement components */}
         
@@ -106,7 +112,7 @@ function App() {
         
 
 
-        <Route path="/admin/surveymanagement" element={<SurveyManagement />} />
+        <Route path="/admin/survey_management" element={<SurveyManagement />} />
 
         {/* surveymanagment */}
         <Route path="/admin/CreateSurveyTemplate" element={<CreateSurveyTemplate />} />
@@ -117,22 +123,33 @@ function App() {
         
         
         {/* organizations */}
-        <Route path="/admin/organizations" exact element={<Organizations />} />
+        <Route path="/admin/organization_management" element={<OrganizationManagement />} />
         
         
         {/* organization management */}
-        <Route path="/admin/organizations/add" element={<AddOrganization />} />
-        <Route path="/admin/organizations/remove" element={<RemoveOrganization />} />
-        <Route path="/admin/organizations/edit" element={<EditOrganization />} />
+        <Route path="/admin/organization/add" element={<AddOrganization />} />
+        <Route path="/admin/organization/remove" element={<RemoveOrganization />} />
+        <Route path="/admin/organization/edit" element={<EditOrganization />} />
 
-        <Route path="/admin/organizations" exact element={<Organizations />} />
-        <Route path="/admin/organizations/add" element={<AddOrganization />} />
-        <Route path="/admin/organizations/remove" element={<RemoveOrganization />} />
-        <Route path="/admin/organizations/edit" element={<EditOrganization />} />
+
+        {/* Projects */}
+        <Route path="/admin/project_management" element={<ProjectManagement />} />
+
+
+        {/* project management */}
+        <Route path="/admin/project/add" element={<AddProject />} />
+        <Route path="/admin/project/remove" element={<RemoveProject />} />
+        <Route path="/admin/project/edit" element={<EditProject />} />
+
+
+
+
+       
 
         {/* Respondent routes */}
         <Route path="/respondent/dashboard" element={<RespondentDashboard />} />
         <Route path="/respondent/activesurveys" element={<ActiveSurveys/>} />
+        <Route path="/TakeSurvey/:surveyId" element={<TakeSurvey />} />
 
 
         {/* Surveyor routes */}
@@ -142,22 +159,23 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/logout" element={<Logout />} />
-
         <Route path="/about" element={<About />} />
-        {/* <Route path="/survey" element={<Survey />} /> */}
-        {/* <Route path="/surveydashboard" element={<SurveyDashboard />} /> */}
-        <Route path="/add-survey-questions" element={<AddSurveyQuestions />} />
-        <Route path="/create-survey" element={<CreateSurvey />} />
-        <Route path="/add-question-type" element={<AddQuestionType />} />
-        <Route path="/delete-question-from-survey" element={<DeleteQuestionFromSurvey />} />
-        <Route path="/display-survey-results" element={<DisplaySurveyResults />} />
-        <Route path="/email-template" element={<EmailTemplate />} />
-        <Route path="/survey-types" element={<SurveyTypes />} />
-        {/* <Route path="/createrole" element={<CreateRole />} />
-        <Route path="/add-survey-template" element={<AddSurveyTemplate />} /> */}
       </Routes>
     </BrowserRouter>
   );
 }
 
 export default App;
+
+
+{/* <Route path="/survey" element={<Survey />} />
+        <Route path="/surveydashboard" element={<SurveyDashboard />} />
+        <Route path="/add-survey-questions" element={<AddSurveyQuestions />} />
+        <Route path="/create-survey" element={<CreateSurvey />} />
+        <Route path="/add-question-type" element={<AddQuestionType />} />
+        <Route path="/delete-question-from-survey" element={<DeleteQuestionFromSurvey />} />
+        <Route path="/display-survey-results" element={<DisplaySurveyResults />} />
+        <Route path="/email-template" element={<EmailTemplate />} />
+        <Route path="/survey-types" element={<SurveyTypes />} /> */}
+{/* <Route path="/createrole" element={<CreateRole />} />
+        <Route path="/add-survey-template" element={<AddSurveyTemplate />} /> */}

@@ -194,6 +194,16 @@ ALTER TABLE "responses" ADD FOREIGN KEY ("question_id") REFERENCES "questions" (
 
 ALTER TABLE "responses" ADD FOREIGN KEY ("survey_id") REFERENCES "surveys" ("id");
 
+ALTER TABLE "surveys"
+ADD COLUMN "start_at" timestamp;
+
+ALTER TABLE "surveys"
+ADD COLUMN "end_at" timestamp;
+
+ALTER TABLE "surveys"
+ADD COLUMN "isActive" boolean DEFAULT false;
+
+
 
 
 

@@ -141,29 +141,69 @@ app.post('/api/login', async (req, res) => {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
 
-        // Fetch user roles based on user_id
-        const rolesResult = await pool.query('SELECT role_id FROM user_roles WHERE user_id = $1', [user.id]);
-        const roles = rolesResult.rows.map(row => row.role_id);
+        // Fetch the first role for the user
+        const roleResult = await pool.query('SELECT role_id FROM user_roles WHERE user_id = $1 LIMIT 1', [user.id]);
+        if (roleResult.rows.length === 0) {
+            return res.status(401).json({ error: 'No roles found for user' });
+        }
 
-        // Map role_id to roles
-        const rolesInfo = {
-            isAdmin: roles.includes(1),
-            isSurveyor: roles.includes(2),
-            isRespondent: roles.includes(3)
-        };
+        const roleId = roleResult.rows[0].role_id;
 
-        const responsePayload = { userId: user.id, username, roles: rolesInfo };
+        const responsePayload = { userId: user.id, roleId };
 
         // Log the response payload to console before sending it
         console.log('Sending login response:', responsePayload);
 
-        // Respond with user info and roles
+        // Respond with user info and role id
         res.json(responsePayload);
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
+
+
+//adding organization
+app.post('/api/addOrganization', async (req, res) => {
+    const { name, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by } = req.body;
+
+    try {
+        const result = await pool.query(
+            `INSERT INTO organizations (name, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by)
+            VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *;`,
+            [name, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by]
+        );
+
+        // Successfully inserted the organization
+        res.status(201).json(result.rows[0]);
+    } catch (err) {
+        console.error('Error adding organization:', err);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+//adding project
+app.post('/api/addProject', async (req, res) => {
+    const { name, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by } = req.body;
+
+    try {
+        const result = await pool.query(
+            `INSERT INTO projects (name, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by)
+            VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *;`,
+            [name, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by]
+        );
+
+        // Successfully inserted the organization
+        res.status(201).json(result.rows[0]);
+    } catch (err) {
+        console.error('Error adding organization:', err);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+
+
+
+
 
 
 //protected routes for Admin
@@ -506,7 +546,8 @@ app.get('/api/search_templates', async (req, res) => {
         );
 
         if (templateQuery.rows.length > 0) {
-            const template = templateQuery.rows[0]; // Assuming you want to work with the first result
+            const template = templateQuery.rows[0];
+            console.log("Template search successful:", template.id); // Assuming you want to work with the first result
             const questionsQuery = await pool.query(
                 'SELECT q.* FROM survey_template_questions stq ' +
                 'JOIN questions q ON stq.question_id = q.id ' +
@@ -514,49 +555,145 @@ app.get('/api/search_templates', async (req, res) => {
                 [template.id]
             );
 
-            if (questionsQuery.rows.length > 0) {
-                console.log("Found questions for template:", questionsQuery.rows);
-                res.json(questionsQuery.rows); // Send the related questions to the client
-            } else {
-                console.log("No questions found for this template");
-                res.status(404).send('No questions found for this template');
-            }
+            // Create a response object including the template ID and the questions
+            const response = {
+                templateId: template.id, // Include the ID of the template
+                templateName: template.name, // Include the name of the template
+                questions: questionsQuery.rows // Include the associated questions
+            };
+
+            console.log("Found questions for template:", questionsQuery.rows);
+            res.json(response); // Send the response object to the client
         } else {
             console.log("Survey template not found");
             res.status(404).send('Survey template not found');
         }
     } catch (err) {
         console.error('Error executing query', err.stack);
-        res.status(500).send('Internal Server Error');
+        res.status(500).json({ message: 'Internal Server Error' }); // Send error as JSON
     }
 });
+
+app.get('/api/search_organizations', async (req, res) => {
+    const searchText = req.query.text; // Get search text from query parameters
+    try {
+        // Query to search for organizations by name
+        const organizationQuery = await pool.query(
+            'SELECT * FROM organizations WHERE name ILIKE $1 ORDER BY id ASC',
+            [`%${searchText}%`]
+        );
+
+        if (organizationQuery.rows.length > 0) {
+            // If organizations are found
+            console.log("Organization search successful:", organizationQuery.rows.length, "found");
+            res.json(organizationQuery.rows); // Send all matched organizations to the client
+        } else {
+            // If no organizations are found
+            console.log("No organizations found with the provided search text");
+            res.status(404).send('No organizations found');
+        }
+    } catch (err) {
+        // Handle any errors that occur during the query execution
+        console.error('Error executing query', err.stack);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
+
+app.get('/api/search_projects', async (req, res) => {
+    const searchText = req.query.text; // Get search text from query parameters
+    try {
+        // Query to search for projects by name
+        const projectQuery = await pool.query(
+            'SELECT * FROM projects WHERE name ILIKE $1 ORDER BY id ASC',
+            [`%${searchText}%`]
+        );
+
+        if (projectQuery.rows.length > 0) {
+            // If projects are found
+            console.log("Project search successful:", projectQuery.rows.length, "found");
+            res.json(projectQuery.rows); // Send all matched projects to the client
+        } else {
+            // If no projects are found
+            console.log("No projects found with the provided search text");
+            res.status(404).send('No projects found');
+        }
+    } catch (err) {
+        // Handle any errors that occur during the query execution
+        console.error('Error executing query', err.stack);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
+
+
+
+
+
 
 
 
 
 
 // Endpoint for creating a survey
-app.post("/api/surveys", async (req, res) => {
-    const { survey_template_id, surveyor_id, organization_id, project_id, surveyor_role_id } = req.body;
+app.post("/api/create_survey", async (req, res) => {
+    const {
+        survey_template_id,
+        surveyor_id,
+        organization_id,
+        project_id,
+        surveyor_role_id,
+        start_at,
+        end_at,
+        isActive,
+        created_by,
+        updated_by,
+        deleted_at,
+        deleted_by
+    } = req.body;
 
     try {
-        // Find the maximum ID from the surveys table
-        const maxIdResult = await pool.query('SELECT MAX(id) FROM surveys');
-        const maxId = maxIdResult.rows[0].max || 0;
-        const newId = maxId + 1;
-
-        // Insert the survey into the database with the new ID
+        // Insert the survey into the database
         await pool.query(
-            "INSERT INTO surveys (id, survey_template_id, surveyor_id, organization_id, project_id, surveyor_role_id, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())",
-            [newId, survey_template_id, surveyor_id, organization_id, project_id, surveyor_role_id]
+            `INSERT INTO surveys (
+                survey_template_id,
+                surveyor_id,
+                organization_id,
+                project_id,
+                surveyor_role_id,
+                created_at,
+                created_by,
+                updated_at,
+                updated_by,
+                deleted_at,
+                deleted_by,
+                start_at,
+                end_at,
+                "isActive"
+            ) VALUES ($1, $2, $3, $4, $5, NOW(), $6, NOW(), $7, $8, $9, $10, $11, $12)`,
+            [
+                survey_template_id,
+                surveyor_id,
+                organization_id,
+                project_id,
+                surveyor_role_id,
+                created_by,
+                updated_by,
+                deleted_at,
+                deleted_by,
+                start_at,
+                end_at,
+                isActive
+            ]
         );
 
-        res.status(201).json({ message: 'Survey created successfully', id: newId });
+        res.status(201).json({ message: 'Survey created successfully' });
     } catch (error) {
         console.error('Error creating survey:', error);
-        res.status(500).json({ message: 'Failed to create survey' });
+        res.status(500).json({ message: `Failed to create survey: ${error.message}` });
     }
 });
+
+
+
 
 
 
@@ -601,6 +738,53 @@ app.get("/api/projects", async (req, res) => {
         res.status(500).json({ message: 'Failed to fetch projects' });
     }
 });
+
+app.get("/api/active_surveys", async (req, res) => {
+    try {
+        // Adjusted query to fetch 'name' as 'title' from 'survey_templates'
+        const sqlQuery = `
+            SELECT s.id, t.name AS title, t.description 
+            FROM surveys s
+            INNER JOIN survey_templates t ON s.survey_template_id = t.id
+            WHERE s."isActive" = true;
+        `;
+        const { rows } = await pool.query(sqlQuery);
+        res.json(rows);
+    } catch (error) {
+        console.error('Error fetching active surveys with template details', error);
+        res.status(500).send('Server error');
+    }
+});
+
+
+
+app.get('/api/surveys/:surveyId/questions', async (req, res) => {
+    try {
+        const surveyId = req.params.surveyId;
+
+        // SQL to fetch questions related to a specific survey
+        const query = `
+            SELECT q.id, q.question, q.question_type_id, stq.description
+            FROM surveys s
+            JOIN survey_templates st ON s.survey_template_id = st.id
+            JOIN survey_template_questions stq ON st.id = stq.survey_template_id
+            JOIN questions q ON stq.question_id = q.id
+            WHERE s.id = $1;
+        `;
+
+        const { rows } = await pool.query(query, [surveyId]);
+        console.log('Sending data to frontend:', rows); // Log the data being sent
+        res.json(rows);
+    } catch (error) {
+        console.error('Failed to fetch survey questions:', error);
+        res.status(500).send('Server error');
+    }
+});
+
+
+
+
+
 
 
 

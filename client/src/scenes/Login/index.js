@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaUser, FaLock } from "react-icons/fa";
-import { useAuth } from "../utils/AuthContext"; // Correct import path as needed
+import { useAuth } from "../utils/AuthContext"; // Ensure this is the correct import path
 
 const Login = () => {
     const [username, setUsername] = useState('');
@@ -11,16 +10,22 @@ const Login = () => {
 
     useEffect(() => {
         if (user) {
-            if (user.isAdmin) {
-                navigate('/admin/dashboard');
-            } else if (user.isSurveyor) {
-                navigate('/surveyor/dashboard');
-            } else if (user.isRespondent) {
-                navigate('/respondent/dashboard');
-            } 
-            
+            switch (user.roleId) {
+                case 1:
+                    navigate('/admin/dashboard');
+                    break;
+                case 2:
+                    navigate('/surveyor/dashboard');
+                    break;
+                case 3:
+                    navigate('/respondent/dashboard');
+                    break;
+                default:
+                    navigate('/');
+                    break;
+            }
         }
-    }, [user, navigate]); // React to changes in user
+    }, [user, navigate]);
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -28,35 +33,26 @@ const Login = () => {
     };
 
     return (
-        <div className="wrapper">
-            <div className="login-container">
-                <h2>Login</h2>
-                {error && <p className="error">{error}</p>}
-                <form onSubmit={handleLogin}>
-                    <div className="input-group">
-                        <FaUser className="icon" />
-                        <input
-                            type="text"
-                            placeholder="Username"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <div className="input-group">
-                        <FaLock className="icon" />
-                        <input
-                            type="password"
-                            placeholder="Password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <button type="submit">Login</button>
-                </form>
-            </div>
-        </div>
+        <form onSubmit={handleLogin}>
+            <label htmlFor="username">Username:</label>
+            <input
+                id="username"
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+            />
+            <label htmlFor="password">Password:</label>
+            <input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+            />
+            {error && <p>{error}</p>}
+            <button type="submit">Login</button>
+        </form>
     );
 };
 
