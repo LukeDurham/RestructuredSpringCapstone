@@ -574,33 +574,126 @@ app.get('/api/search_templates', async (req, res) => {
     }
 });
 
+app.get('/api/search_organizations', async (req, res) => {
+    const searchText = req.query.text; // Get search text from query parameters
+    try {
+        // Query to search for organizations by name
+        const organizationQuery = await pool.query(
+            'SELECT * FROM organizations WHERE name ILIKE $1 ORDER BY id ASC',
+            [`%${searchText}%`]
+        );
+
+        if (organizationQuery.rows.length > 0) {
+            // If organizations are found
+            console.log("Organization search successful:", organizationQuery.rows.length, "found");
+            res.json(organizationQuery.rows); // Send all matched organizations to the client
+        } else {
+            // If no organizations are found
+            console.log("No organizations found with the provided search text");
+            res.status(404).send('No organizations found');
+        }
+    } catch (err) {
+        // Handle any errors that occur during the query execution
+        console.error('Error executing query', err.stack);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
+
+app.get('/api/search_projects', async (req, res) => {
+    const searchText = req.query.text; // Get search text from query parameters
+    try {
+        // Query to search for projects by name
+        const projectQuery = await pool.query(
+            'SELECT * FROM projects WHERE name ILIKE $1 ORDER BY id ASC',
+            [`%${searchText}%`]
+        );
+
+        if (projectQuery.rows.length > 0) {
+            // If projects are found
+            console.log("Project search successful:", projectQuery.rows.length, "found");
+            res.json(projectQuery.rows); // Send all matched projects to the client
+        } else {
+            // If no projects are found
+            console.log("No projects found with the provided search text");
+            res.status(404).send('No projects found');
+        }
+    } catch (err) {
+        // Handle any errors that occur during the query execution
+        console.error('Error executing query', err.stack);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
+
+
+
+
+
 
 
 
 
 
 // Endpoint for creating a survey
-app.post("/api/surveys", async (req, res) => {
-    const { survey_template_id, surveyor_id, organization_id, project_id, surveyor_role_id } = req.body;
+app.post("/api/create_survey", async (req, res) => {
+    const {
+        survey_template_id,
+        surveyor_id,
+        organization_id,
+        project_id,
+        surveyor_role_id,
+        start_at,
+        end_at,
+        isActive,
+        created_by,
+        updated_by,
+        deleted_at,
+        deleted_by
+    } = req.body;
 
     try {
-        // Find the maximum ID from the surveys table
-        const maxIdResult = await pool.query('SELECT MAX(id) FROM surveys');
-        const maxId = maxIdResult.rows[0].max || 0;
-        const newId = maxId + 1;
-
-        // Insert the survey into the database with the new ID
+        // Insert the survey into the database
         await pool.query(
-            "INSERT INTO surveys (id, survey_template_id, surveyor_id, organization_id, project_id, surveyor_role_id, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())",
-            [newId, survey_template_id, surveyor_id, organization_id, project_id, surveyor_role_id]
+            `INSERT INTO surveys (
+                survey_template_id,
+                surveyor_id,
+                organization_id,
+                project_id,
+                surveyor_role_id,
+                created_at,
+                created_by,
+                updated_at,
+                updated_by,
+                deleted_at,
+                deleted_by,
+                start_at,
+                end_at,
+                "isActive"
+            ) VALUES ($1, $2, $3, $4, $5, NOW(), $6, NOW(), $7, $8, $9, $10, $11, $12)`,
+            [
+                survey_template_id,
+                surveyor_id,
+                organization_id,
+                project_id,
+                surveyor_role_id,
+                created_by,
+                updated_by,
+                deleted_at,
+                deleted_by,
+                start_at,
+                end_at,
+                isActive
+            ]
         );
 
-        res.status(201).json({ message: 'Survey created successfully', id: newId });
+        res.status(201).json({ message: 'Survey created successfully' });
     } catch (error) {
         console.error('Error creating survey:', error);
-        res.status(500).json({ message: 'Failed to create survey' });
+        res.status(500).json({ message: `Failed to create survey: ${error.message}` });
     }
 });
+
+
+
 
 
 
