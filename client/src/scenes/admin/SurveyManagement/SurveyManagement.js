@@ -14,6 +14,9 @@ const SurveyManagement = () => {
             case 'Add Question':
                 navigate('/admin/addQuestion'); // Change this to the correct path
                 break;
+            case 'Create Survey':
+                navigate('/admin/CreateSurvey'); // Change this to the correct path
+                break;
             default:
                 console.log('No route defined for: ', action);
             }

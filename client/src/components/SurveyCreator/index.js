@@ -8,7 +8,8 @@ import FormLabel from '@mui/material/FormLabel';
 import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add'; // For adding multiple choice options
 import DeleteIcon from '@mui/icons-material/Delete';
-import Sidebar from '../Sidebar';
+import CSSidebar from '../CSSidebar';
+import ConfirmationModal from '../ConfirmationModal';
 import { SurveyContainer, QuestionContainer } from './styles';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
@@ -26,17 +27,24 @@ const questionTypeToId = {
 
 export const SurveyCreatorComponent = ({ setSuccessMessage, setErrorMessage }) => {
     const [questions, setQuestions] = useState([]);
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [templates, setTemplates] = useState([
+        { searchQuery: '' }, // Make sure all templates at least have a searchQuery property
+    ]);
+    const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
+    const [pendingQuestions, setPendingQuestions] = useState([]);
     const [templateName, setTemplateName] = useState('');
-    const [submitError, setSubmitError] = useState(''); // If you decide to use it, uncomment
     const [templateDescription, setTemplateDescription] = useState('');
     const { user } = useAuth();
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [searchData, setSearchData] = useState([]);
+    //for creating survey off of survey import
+    const [surveyData, setSurveyData] = useState({
+  surveyTemplateId: null,
+  questions: []
+});
 
 
 
-    const openSubmitDialog = () => {
-        setIsDialogOpen(true);
-    };
 
     const handleSubmitSurvey = async () => {
         setIsDialogOpen(false);
@@ -111,7 +119,7 @@ export const SurveyCreatorComponent = ({ setSuccessMessage, setErrorMessage }) =
         }
     };
 
-    
+
     const getDefaultOptions = (type) => {
         const options = {
             'True or False': ['True', 'False'],
@@ -182,6 +190,19 @@ export const SurveyCreatorComponent = ({ setSuccessMessage, setErrorMessage }) =
         }
     };
 
+
+
+    
+
+    const openSubmitDialog = () => {
+        setIsDialogOpen(true);
+    };
+
+
+
+    
+
+
     const handleAddQuestionFromSearch = (searchResult, indexToRemove) => {
         const { question_type_id, question } = searchResult;
         const type = Object.keys(questionTypeToId).find(key => questionTypeToId[key] === question_type_id);
@@ -198,6 +219,56 @@ export const SurveyCreatorComponent = ({ setSuccessMessage, setErrorMessage }) =
         }
     };
 
+
+    //import survey template
+
+    const handleImportQuestionsFromTemplate = (templateQuestions) => {
+        const importedQuestions = templateQuestions.map(q => {
+            const typeKey = Object.keys(questionTypeToId).find(key => questionTypeToId[key] === q.question_type_id);
+            if (!typeKey) {
+                console.error("Invalid question type ID:", q.question_type_id);
+                return null;
+            }
+            return {
+                questionText: q.question,  // Set the question text from the search result
+                options: getDefaultOptions(typeKey),  // Get default options based on the type
+                type: typeKey  // Set the type using the reverse lookup from ID to type string
+            };
+        }).filter(q => q !== null);  // Filter out any undefined entries due to invalid type IDs
+
+        setQuestions(importedQuestions);  // Set the imported questions into state
+    };
+
+    const handleSubmitTemplateImport = async (index) => {
+        const query = questions[index].searchQuery;
+        try {
+            const response = await fetch(`/api/search_templates?text=${encodeURIComponent(query)}`, {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' },
+            });
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(`Template search failed: ${errorData.message}`);
+            }
+            const templates = await response.json();
+            if (templates.length > 0) {
+                console.log("Template search successful:", templates);
+                setPendingQuestions(templates);
+                setConfirmModalOpen(true);  // Open confirmation modal
+            } else {
+                console.log("No templates found matching the search criteria.");
+                setErrorMessage("No templates found matching the search criteria.");
+            }
+        } catch (error) {
+            console.error("Template Import Error:", error.message);
+            setErrorMessage(`Template import error: ${error.message}`);
+        }
+    };
+
+
+
+
+    
 
 
 
@@ -262,6 +333,22 @@ export const SurveyCreatorComponent = ({ setSuccessMessage, setErrorMessage }) =
                         </IconButton>
                     </FormControl>
                 );
+            case 'Import Survey Template':
+                return (
+                    <FormControl fullWidth>
+                        <FormLabel>{`Import Survey Template ${index + 1}`}</FormLabel>
+                        <TextField
+                            label="Search"
+                            variant="outlined"
+                            value={q.searchQuery}
+                            onChange={(e) => handleSearchQueryChange(index, e.target.value)}
+                        />
+                        <Button onClick={() => handleSubmitTemplateImport(index)}>Import Template</Button>
+                        <IconButton onClick={() => handleRemoveQuestion(index)} aria-label="delete">
+                            <DeleteIcon />
+                        </IconButton>
+                    </FormControl>
+                );
             default:
                 return null;
         }
@@ -271,7 +358,7 @@ export const SurveyCreatorComponent = ({ setSuccessMessage, setErrorMessage }) =
 
     return (
         <div style={{ display: 'flex', flexDirection: 'row' }}>
-            <Sidebar onAddQuestion={addQuestion} />
+            <CSSidebar onAddQuestion={addQuestion} />
             <SurveyContainer>
                 {questions.map((q, index) => (
                     <QuestionContainer key={index}>
@@ -279,19 +366,17 @@ export const SurveyCreatorComponent = ({ setSuccessMessage, setErrorMessage }) =
                     </QuestionContainer>
                 ))}
                 {questions.length > 0 && (
-                    <Button variant="contained" onClick={openSubmitDialog}>Submit Survey Template</Button>
+                    <Button variant="contained" onClick={openSubmitDialog}>Submit Survey </Button>
                 )}
-                {/* Render the submission error message if present */}
-                {submitError && <p className="error">{submitError}</p>}
             </SurveyContainer>
             <Dialog open={isDialogOpen} onClose={() => setIsDialogOpen(false)}>
-                <DialogTitle>Submit Survey Template</DialogTitle>
+                <DialogTitle>Submit Survey</DialogTitle>
                 <DialogContent>
                     <TextField
                         autoFocus
                         margin="dense"
                         id="name"
-                        label="Template Name"
+                        label="Survey Name"
                         type="text"
                         fullWidth
                         variant="outlined"
@@ -301,7 +386,7 @@ export const SurveyCreatorComponent = ({ setSuccessMessage, setErrorMessage }) =
                     <TextField
                         margin="dense"
                         id="description"
-                        label="Template Description"
+                        label="Survey Description"
                         type="text"
                         fullWidth
                         multiline
@@ -316,6 +401,14 @@ export const SurveyCreatorComponent = ({ setSuccessMessage, setErrorMessage }) =
                     <Button onClick={handleSubmitSurvey}>Submit</Button>
                 </DialogActions>
             </Dialog>
+            <ConfirmationModal
+                isOpen={isConfirmModalOpen}
+                onClose={() => setConfirmModalOpen(false)}
+                onConfirm={() => {
+                    handleImportQuestionsFromTemplate(pendingQuestions);
+                    setConfirmModalOpen(false); // Optionally close modal after confirm
+                }}
+            />
         </div>
     );
 };

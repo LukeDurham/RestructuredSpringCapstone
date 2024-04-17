@@ -11,13 +11,6 @@ function HomePage() {
     navigate('/login'); // Programmatically navigate to /login route
   };
 
-  const goToRespondentDash = () => {
-    navigate('/respondentDash'); // Programmatically navigate to /login route
-  };
-  
-  const goToSurveyDashboard = () => {
-    navigate('/surveydashboard'); // Programmatically navigate to /surveydashboard route
-  };
 
   return (
     <div className="home-page">

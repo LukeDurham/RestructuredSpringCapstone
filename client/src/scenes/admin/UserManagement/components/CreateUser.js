@@ -36,26 +36,35 @@ function CreateUser() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault();  // Prevent default form submission behavior
+
     try {
       const createUserResponse = await fetch('/api/createuser', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(user),
+        body: JSON.stringify({
+          username: user.username,
+          email: user.email,
+          password: user.password,
+          roleId: user.role  // Ensure this is "roleId" to match the backend expectation
+        }),
       });
 
       if (createUserResponse.ok) {
         console.log('User created successfully');
-        setUser({ username: '', email: '', password: '', role: '' });
+        setUser({ username: '', email: '', password: '', role: '' });  // Reset user state
       } else {
-        console.error('Failed to create user');
+        // Handle errors when createUserResponse is not ok
+        const errorData = await createUserResponse.json();  // Assuming the server sends back a JSON response
+        console.error('Failed to create user:', errorData.message);  // Log the server provided error
       }
     } catch (error) {
       console.error('Error creating user:', error);
     }
   };
+
 
   return (
     <div style={{ display: 'flex' }}>

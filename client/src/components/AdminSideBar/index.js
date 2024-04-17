@@ -28,7 +28,7 @@ const AdminSideBar = () => {
                 break;
             case 'Logout':
                 // Implement logout functionality here
-                console.log('Logout initiated');
+                navigate('/logout');
                 break;
             default:
                 console.log('No action defined for: ', menuId);

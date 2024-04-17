@@ -108,7 +108,15 @@ app.post("/api/CreatingSurveyTemplate/survey_template_questions", async (req, re
 });
 
 
-
+//get respondent active surveys
+app.get('/api/personalactivesurveys', async (req, res) => {
+    try {
+        const surveys = await Survey.findAll(); // Assuming you're using an ORM like Sequelize
+        res.json(surveys);
+    } catch (error) {
+        res.status(500).send({ error: 'Failed to fetch surveys.' });
+    }
+});
 
 
 
@@ -119,25 +127,44 @@ app.post("/api/CreatingSurveyTemplate/survey_template_questions", async (req, re
 app.post('/api/login', async (req, res) => {
     const { username, password } = req.body;
     try {
-        // Check if user exists and the password matches
-        const userResult = await pool.query('SELECT * FROM users WHERE username = $1 AND password = $2', [username, password]);
+        // Check if user exists
+        const userResult = await pool.query('SELECT id, password FROM users WHERE username = $1', [username]);
         if (userResult.rows.length === 0) {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
 
         const user = userResult.rows[0];
 
-        // Fetch user role
-        const roleResult = await pool.query('SELECT r.name AS role FROM user_roles ur JOIN roles r ON ur.role_id = r.id WHERE ur.user_id = $1', [user.id]);
-        const role = roleResult.rows[0]?.role;
+        // Compare hashed password
+        const match = await bcrypt.compare(password, user.password);
+        if (!match) {
+            return res.status(401).json({ error: 'Invalid credentials' });
+        }
 
-        // Respond with user role
-        res.json({ userId: user.id, role });
+        // Fetch user roles based on user_id
+        const rolesResult = await pool.query('SELECT role_id FROM user_roles WHERE user_id = $1', [user.id]);
+        const roles = rolesResult.rows.map(row => row.role_id);
+
+        // Map role_id to roles
+        const rolesInfo = {
+            isAdmin: roles.includes(1),
+            isSurveyor: roles.includes(2),
+            isRespondent: roles.includes(3)
+        };
+
+        const responsePayload = { userId: user.id, username, roles: rolesInfo };
+
+        // Log the response payload to console before sending it
+        console.log('Sending login response:', responsePayload);
+
+        // Respond with user info and roles
+        res.json(responsePayload);
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
+
 
 //protected routes for Admin
 app.get('/api/adminRoute', async (req, res) => {
@@ -470,15 +497,34 @@ app.post("/api/survey_questions", async (req, res) => {
     }
 });
 
-app.get('/api/search_questions', async (req, res) => {
+app.get('/api/search_templates', async (req, res) => {
     const searchText = req.query.text; // Get search text from query parameters
     try {
-        const queryResult = await pool.query(
-            'SELECT question_type_id, question, id FROM questions WHERE question ILIKE $1 ORDER BY id ASC',
+        const templateQuery = await pool.query(
+            'SELECT * FROM survey_templates WHERE name ILIKE $1 ORDER BY id ASC',
             [`%${searchText}%`]
         );
-        console.log("Sending search results:", queryResult.rows); // Log what's being sent back
-        res.json(queryResult.rows);
+
+        if (templateQuery.rows.length > 0) {
+            const template = templateQuery.rows[0]; // Assuming you want to work with the first result
+            const questionsQuery = await pool.query(
+                'SELECT q.* FROM survey_template_questions stq ' +
+                'JOIN questions q ON stq.question_id = q.id ' +
+                'WHERE stq.survey_template_id = $1',
+                [template.id]
+            );
+
+            if (questionsQuery.rows.length > 0) {
+                console.log("Found questions for template:", questionsQuery.rows);
+                res.json(questionsQuery.rows); // Send the related questions to the client
+            } else {
+                console.log("No questions found for this template");
+                res.status(404).send('No questions found for this template');
+            }
+        } else {
+            console.log("Survey template not found");
+            res.status(404).send('Survey template not found');
+        }
     } catch (err) {
         console.error('Error executing query', err.stack);
         res.status(500).send('Internal Server Error');
