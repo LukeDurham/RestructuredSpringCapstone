@@ -163,6 +163,48 @@ app.post('/api/login', async (req, res) => {
 });
 
 
+//adding organization
+app.post('/api/addOrganization', async (req, res) => {
+    const { name, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by } = req.body;
+
+    try {
+        const result = await pool.query(
+            `INSERT INTO organizations (name, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by)
+            VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *;`,
+            [name, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by]
+        );
+
+        // Successfully inserted the organization
+        res.status(201).json(result.rows[0]);
+    } catch (err) {
+        console.error('Error adding organization:', err);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+//adding project
+app.post('/api/addProject', async (req, res) => {
+    const { name, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by } = req.body;
+
+    try {
+        const result = await pool.query(
+            `INSERT INTO projects (name, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by)
+            VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *;`,
+            [name, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by]
+        );
+
+        // Successfully inserted the organization
+        res.status(201).json(result.rows[0]);
+    } catch (err) {
+        console.error('Error adding organization:', err);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+
+
+
+
+
 
 //protected routes for Admin
 app.get('/api/adminRoute', async (req, res) => {

@@ -22,10 +22,13 @@ const AdminSideBar = () => {
                 logout(); // Call logout function which should set user to null
                 break;
             case 'UserManagement':
-                navigate('/admin/UserManagement');
+                navigate('/admin/user_management');
                 break;
             case 'SurveyManagement':
-                navigate('/admin/SurveyManagement');
+                navigate('/admin/survey_management');
+                break;
+            case 'ProjectManagement':
+                navigate('/admin/project_management');
                 break;
             case 'Analytics':
                 navigate('/admin/Analytics');
@@ -33,8 +36,8 @@ const AdminSideBar = () => {
             case 'Notifications':
                 navigate('/admin/Notifications');
                 break;
-            case 'AuditLogs':
-                navigate('/admin/AuditLogs');
+            case 'OrganizationManagement':
+                navigate('/admin/organization_management');
                 break;
             case 'Settings':
                 navigate('/admin/Settings');

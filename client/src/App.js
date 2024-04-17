@@ -46,10 +46,16 @@ import CreateSurveyTemplate from './scenes/admin/CreateSurveyTemplate';
 import CreateSurvey from './scenes/admin/CreateSurvey';
 import Logout from './scenes/Logout/index.js';
 
-import Organizations from './scenes/admin/Organizations/Organizations.js';
-import AddOrganization from './scenes/admin/Organizations/AddOrganization.js';
-import RemoveOrganization from './scenes/admin/Organizations/RemoveOrganization.js';
-import EditOrganization from './scenes/admin/Organizations/EditOrganization.js';
+import OrganizationManagement from './scenes/admin/OrganizationManagement/OrganizationManagement.js';
+import AddOrganization from './scenes/admin/OrganizationManagement/components/AddOrganization.js';
+import RemoveOrganization from './scenes/admin/OrganizationManagement/components/RemoveOrganization.js';
+import EditOrganization from './scenes/admin/OrganizationManagement/components/EditOrganization.js';
+
+import ProjectManagement from './scenes/admin/ProjectManagement/ProjectManagement.js';
+import AddProject from './scenes/admin/ProjectManagement/components/AddProject.js';
+import RemoveProject from './scenes/admin/ProjectManagement/components/RemoveProject.js';
+import EditProject from './scenes/admin/ProjectManagement/components/EditProject.js';
+
 
 
 import RespondentDashboard from './scenes/Respondent/RespondentDashboard.js';
@@ -92,7 +98,7 @@ function App() {
         
 
         {/* usermanagement binding page */}
-        <Route path="/admin/usermanagement" element={<UserManagement />} />
+        <Route path="/admin/user_management" element={<UserManagement />} />
 
         {/* usermanagement components */}
         
@@ -105,7 +111,7 @@ function App() {
         
 
 
-        <Route path="/admin/surveymanagement" element={<SurveyManagement />} />
+        <Route path="/admin/survey_management" element={<SurveyManagement />} />
 
         {/* surveymanagment */}
         <Route path="/admin/CreateSurveyTemplate" element={<CreateSurveyTemplate />} />
@@ -116,18 +122,28 @@ function App() {
         
         
         {/* organizations */}
-        <Route path="/admin/organizations" exact element={<Organizations />} />
+        <Route path="/admin/organization_management" element={<OrganizationManagement />} />
         
         
         {/* organization management */}
-        <Route path="/admin/organizations/add" element={<AddOrganization />} />
-        <Route path="/admin/organizations/remove" element={<RemoveOrganization />} />
-        <Route path="/admin/organizations/edit" element={<EditOrganization />} />
+        <Route path="/admin/organization/add" element={<AddOrganization />} />
+        <Route path="/admin/organization/remove" element={<RemoveOrganization />} />
+        <Route path="/admin/organization/edit" element={<EditOrganization />} />
 
-        <Route path="/admin/organizations" exact element={<Organizations />} />
-        <Route path="/admin/organizations/add" element={<AddOrganization />} />
-        <Route path="/admin/organizations/remove" element={<RemoveOrganization />} />
-        <Route path="/admin/organizations/edit" element={<EditOrganization />} />
+
+        {/* Projects */}
+        <Route path="/admin/project_management" element={<ProjectManagement />} />
+
+
+        {/* project management */}
+        <Route path="/admin/project/add" element={<AddProject />} />
+        <Route path="/admin/project/remove" element={<RemoveProject />} />
+        <Route path="/admin/project/edit" element={<EditProject />} />
+
+
+
+
+       
 
         {/* Respondent routes */}
         <Route path="/respondent/dashboard" element={<RespondentDashboard />} />

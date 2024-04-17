@@ -7,7 +7,9 @@ import PeopleIcon from '@mui/icons-material/People';
 import AssessmentIcon from '@mui/icons-material/Assessment';
 import SettingsIcon from '@mui/icons-material/Settings';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import HistoryIcon from '@mui/icons-material/History';
+import GroupIcon from '@mui/icons-material/Group'; // Import the Group icon
+import AssignmentIcon from '@mui/icons-material/Assignment'; // Import the icon from MUI
+
 import ExitToAppIcon from '@mui/icons-material/ExitToApp'; // Used for "Logout"
 
 const AdminIconMenu = ({ onMenuClick }) => {
@@ -26,9 +28,10 @@ const AdminIconMenu = ({ onMenuClick }) => {
     const menuItems = [
         { id: 'UserManagement', text: 'User Management', icon: <PeopleIcon />, onClick: () => handleMenuItemClick('UserManagement') },
         { id: 'SurveyManagement', text: 'Survey Management', icon: <DashboardIcon />, onClick: () => handleMenuItemClick('SurveyManagement') },
+        { id: 'OrganizationManagement', text: 'Organization Management', icon: <GroupIcon />, onClick: () => handleMenuItemClick('OrganizationManagement') },
+        { id: 'ProjectManagement', text: 'Project Management', icon: <AssignmentIcon />, onClick: () => handleMenuItemClick('ProjectManagement') },
         { id: 'Analytics', text: 'Analytics & Reporting', icon: <AssessmentIcon />, onClick: () => handleMenuItemClick('Analytics') },
         { id: 'Notifications', text: 'Notifications', icon: <NotificationsIcon />, onClick: () => handleMenuItemClick('Notifications') },
-        { id: 'AuditLogs', text: 'Audit Logs', icon: <HistoryIcon />, onClick: () => handleMenuItemClick('AuditLogs') },
         { id: 'Settings', text: 'Settings', icon: <SettingsIcon />, onClick: () => handleMenuItemClick('Settings') },
         { id: 'Logout', text: 'Logout', icon: <ExitToAppIcon />, onClick: () => handleMenuItemClick('Logout') },
     ];
