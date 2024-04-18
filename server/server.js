@@ -781,6 +781,25 @@ app.get('/api/surveys/:surveyId/questions', async (req, res) => {
     }
 });
 
+app.post('/api/submit_response', async (req, res) => {
+    try {
+        const response = req.body; // Your survey response data will be in req.body
+        console.log('Received survey response:', response);
+
+        // TODO: Validate and process the response object as needed
+        // For example, inserting the response into your database
+
+        // A placeholder for database insertion logic
+        // const insertResponseQuery = 'INSERT INTO responses (...) VALUES (...) RETURNING *';
+        // const result = await pool.query(insertResponseQuery, [...values]);
+
+        res.status(200).json({ message: 'Survey response submitted successfully' });
+    } catch (error) {
+        console.error('Failed to submit survey response:', error);
+        res.status(500).send('Server error while submitting survey response');
+    }
+});
+
 
 
 

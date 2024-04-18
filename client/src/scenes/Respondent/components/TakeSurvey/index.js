@@ -2,9 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import TakeSurveyLoader from '../../../../components/TakeSurveyLoader'; // Adjust the path as needed
 import RespondentSideBar from '../../../../components/RespondentSideBar'; // Ensure this path is correct
-import Button from '@material-ui/core/Button'; // Import Button from Material-UI
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@material-ui/core';
+import { SurveyContainer, QuestionContainer } from './styles';
 
 const TakeSurvey = () => {
+    const [isDialogOpen, setIsDialogOpen] = React.useState(false);
+    const [templateName, setTemplateName] = React.useState('');
+    const [templateDescription, setTemplateDescription] = React.useState('');
     const { surveyId } = useParams();
     const [questions, setQuestions] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -35,22 +39,22 @@ const TakeSurvey = () => {
     };
 
     return (
-        <div style={{ display: 'flex' }}>
+        <div style={{ display: 'flex', width: '100%' }}> {/* Flex container for the sidebar and survey content */}
             <RespondentSideBar />
-            <div style={{ flex: 1, padding: '20px' }}>
-                {isLoading && <p>Loading questions...</p>}
-                {error && <p>Error loading questions: {error}</p>}
-                {!isLoading && questions.length === 0 && <p>No questions found.</p>}
+            <SurveyContainer style={{ flex: 1 }}> {/* Ensure SurveyContainer takes up the remaining space */}
                 {questions.map((question, index) => (
-                    <TakeSurveyLoader key={index} question={question} index={index} />
+                    <QuestionContainer key={index}>
+                        <TakeSurveyLoader question={question} index={index} />
+                    </QuestionContainer>
                 ))}
-                {!isLoading && questions.length > 0 && (
-                    <button style={{ padding: '10px 20px', marginTop: '20px', backgroundColor: 'purple', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
-                        onClick={() => console.log('Submit Survey')}>
+                {/* Additional components like Buttons or Dialogs */}
+                {questions.length > 0 && (
+                    <Button onClick={handleSubmit} variant="contained" color="primary">
                         Submit Survey
-                    </button>
+                    </Button>
                 )}
-            </div>
+                {error && <p>Error loading questions: {error}</p>}
+            </SurveyContainer>
         </div>
     );
 };
