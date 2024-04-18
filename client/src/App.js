@@ -7,7 +7,6 @@ import Support from './scenes/common/Support';
 import { CssBaseline } from '@mui/material';
 import { ThemeProvider } from './ThemeContext';
 import Header from './components/Header'
-import './index.css'
 
 
 // import Survey from './scenes/survey/Survey';
@@ -103,6 +102,7 @@ function App() {
           {/* MainLayout routes that include the Header */}
           <Route path="/" element={<MainLayout />}>
             <Route index element={<HomePage />} />
+            <Route path="login" element={<Login />} />
             <Route path="about" element={<About />} />
             <Route path="support" element={<Support />} />
           </Route>

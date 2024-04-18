@@ -23,6 +23,7 @@ const LogoImage = styled('img')({
 
 
 
+
 function HomePage() {
   const navigate = useNavigate();
 

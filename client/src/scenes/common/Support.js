@@ -2,15 +2,6 @@ import React, { useState } from "react";
 import { TextField, Button, Typography, Container, Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
-
-const StyledHome = styled('div')(({ theme }) => ({
-    backgroundColor: theme.palette.background.default,
-    color: theme.palette.text.primary,
-    padding: 20,
-    textAlign: 'center',
-    minHeight: '100vh',
-    overflowX: 'hidden'
-}));
 const Support = () => {
     const [formData, setFormData] = useState({
         name: '',
@@ -18,7 +9,14 @@ const Support = () => {
         message: ''
     });
 
-    
+    const StyledHome = styled('div')(({ theme }) => ({
+        backgroundColor: theme.palette.background.default,
+        color: theme.palette.text.primary,
+        padding: 20,
+        textAlign: 'center',
+        minHeight: '100vh',
+        overflowX: 'hidden'
+    }));
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -34,6 +32,7 @@ const Support = () => {
 
     return (
         <StyledHome>
+
             <Container maxWidth="sm" sx={{ mt: 4, mb: 4, padding: 3 }}>
                 <Typography variant="h4" component="h1" gutterBottom>
                     Support Form
