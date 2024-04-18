@@ -1,0 +1,74 @@
+/* index.css */
+:root {
+    --body-background: white;
+    /* Corrected background color */
+    --text-color: black;
+    /* Default text color */
+    --link-color: navy;
+    /* Default link color */
+    --button-bg-color: black;
+    /* Default button background color */
+    --button-bg-hover-color: gray;
+    /* Hover state color */
+    --button-text-color: white;
+    /* Default button text color */
+}
+
+* {
+    box-sizing: border-box;
+    /* Add box-sizing to make sure padding and borders are included in total width and height */
+}
+
+body {
+    background-color: var(--body-background);
+    color: var(--text-color);
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    /* Ensure full width */
+    min-height: 100vh;
+    /* Minimum full viewport height */
+    overflow-x: hidden;
+    /* Prevents horizontal scroll */
+}
+
+html {
+    height: 100%;
+}
+
+/* Ensures <a> tags don't have padding/margin that affect full width */
+a {
+    color: var(--link-color);
+    text-decoration: none;
+    /* Optional: Removes underline */
+}
+
+/* Resets margin and padding on all elements to prevent unexpected spacing */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+}
+
+/* Styles buttons with default and hover states */
+button {
+    background-color: var(--button-bg-color);
+    color: var(--button-text-color);
+    border: none;
+    /* Removes default border */
+    padding: 0.5em 1em;
+    /* Provides some padding inside the button */
+    cursor: pointer;
+    /* Changes the cursor on hover */
+}
+
+button:hover {
+    background-color: var(--button-bg-hover-color);
+}
+
+/* If using Material-UI, you might want to ensure its Container component is full width */
+.MuiContainer-root {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
