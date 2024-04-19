@@ -1,7 +1,8 @@
 import React from 'react';
-import '../../global.css';
+
 // import { useNavigate } from 'react-router-dom';
 import AdminSideBar from '../../components/AdminSideBar';
+import StyledHome from '../../components/StyledHome'; // Make sure the path to StyledHome.js is correct
 
 const AdminDashboard = () => {
 
@@ -10,10 +11,10 @@ const AdminDashboard = () => {
     // Your logic here (if any)...
 
     return (
-        <div>
-            <AdminSideBar />
-            {/* Additional content can go here */}
-        </div>
+
+        <AdminSideBar />
+
+            
 
   
     );

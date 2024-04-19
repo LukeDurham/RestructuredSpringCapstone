@@ -1,8 +1,8 @@
 /* index.css */
 :root {
-    --body-background: white;
+    --body-background: black;
     /* Corrected background color */
-    --text-color: black;
+    --text-color: white;
     /* Default text color */
     --link-color: navy;
     /* Default link color */
