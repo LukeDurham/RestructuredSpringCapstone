@@ -1,35 +1,15 @@
-// // import React from "react";
- 
-//  import Surveys from '../../components/Surveys'; // Corrected import path
-//  import React, { useState } from "react";
-//  import SurvAppBar from '../../components/SurveyorAppBar'; // Import the RespondentAppBar component
-// import { ThemeProvider, createTheme } from '@mui/material/styles';
-// import CssBaseline from '@mui/material/CssBaseline'; // Add this line
-// import getLPTheme from '../../getLPTheme';
+import React from 'react';
+import SurveyorSideBar from '../../components/SurveyorSideBar';
 
 
-//  function SurveyorDashboard() {
+const SurveyorDashboard = () => {
+    // const navigate = useNavigate();
 
-//   const [mode, setMode] = useState('dark'); // Add this line
-//     const LPtheme = createTheme(getLPTheme(mode)); // Add this line
+    return (
+        <div>
+            <SurveyorSideBar />
+        </div>
+    );
+};
 
-//     const toggleColorMode = () => {
-//         setMode((prev) => (prev === 'dark' ? 'light' : 'dark'));
-//     };
-
-//    return (
-//     <ThemeProvider theme={LPtheme}>
-//       <CssBaseline/>
-//      <div className="respondent-dashboard">
-//      <SurvAppBar mode={mode} toggleColorMode={toggleColorMode} />
-//        <div className="dashboard-content">
-//          <Surveys />
-//          <h1>Surveyor Dashboard</h1>
-//        </div>
-//      </div>
-//      </ThemeProvider>
-
-//    );
-//  }
-
-//  export default SurveyorDashboard;
+export default SurveyorDashboard;

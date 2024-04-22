@@ -8,7 +8,6 @@ const AdminDashboard = () => {
     return (
         <div>
             <AdminSideBar />
-            <h1>Welcome Admin</h1>
         </div>
     );
 };

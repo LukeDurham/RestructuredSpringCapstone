@@ -44,8 +44,9 @@ import AddQuestionType from './scenes/survey/alterSurveys/AddQuestionType';
 import AdminDashboard from './scenes/admin/AdminDashboard';
 import SurveyorDashboard from './scenes/survey/SurveyDashboard.js';
 
+import EditSurvey from './scenes/admin/EditSurvey/index.js';
 
-import SurveyDashboard from './scenes/Surveyor/SurveyorDashboard.js';
+import SurveyDashboard from './scenes/oldSurveyor/SurveyorDashboard.js';
 import AddQuestion from './scenes/admin/AddQuestion';
 import CreateSurveyTemplate from './scenes/admin/CreateSurveyTemplate';
 import CreateSurvey from './scenes/admin/CreateSurvey';
@@ -67,6 +68,7 @@ import RespondentDashboard from './scenes/Respondent/RespondentDashboard.js';
 import ActiveSurveys from './scenes/Respondent/components/ActiveSurveys';
 import TakeSurvey from './scenes/Respondent/components/TakeSurvey';
 import MainLayout from './components/NoLoginLayout/index.js';
+import ManageActiveSurveys from './scenes/admin/ManageActiveSurveys/index.js';
 
 
 function App() {
@@ -107,7 +109,6 @@ function App() {
             <Route path="support" element={<Support />} />
           </Route>
             {/* regular login dashboard for respondents */}
-            {<Route path="/surveyordashboard" element={<SurveyDashboard />} /> }
             
 
 
@@ -126,6 +127,9 @@ function App() {
             <Route path="/admin/create-account-permissions" element={<CreateAccountPermissions />} />
             <Route path="/admin/createuser" element={<CreateUser />} />
             <Route path="/admin/createuser-role" element={<CreateUserRole />} />
+            <Route path="/admin/edit-survey" element={<EditSurvey />} />
+            <Route path="/admin/ManageActiveSurveys" element={<ManageActiveSurveys />} />
+
 
             
 
@@ -159,7 +163,9 @@ function App() {
             <Route path="/admin/project/remove" element={<RemoveProject />} />
             <Route path="/admin/project/edit" element={<EditProject />} />
 
-
+            {/* Surveyor routes */}
+          
+            {/* <Route path="/surveyor/dashboard" element={<SurveyorDashboard />} /> */}
 
 
           

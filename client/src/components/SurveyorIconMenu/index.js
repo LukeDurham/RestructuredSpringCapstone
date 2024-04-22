@@ -3,15 +3,12 @@ import { useAuth } from '../../scenes/utils/AuthContext';
 import { StyledList, StyledListItem, StyledListItemIcon, StyledListItemText } from './styles';
 import ButtonBase from '@mui/material/ButtonBase';
 import DashboardIcon from '@mui/icons-material/Dashboard';
-import PeopleIcon from '@mui/icons-material/People';
 import AssessmentIcon from '@mui/icons-material/Assessment';
-import SettingsIcon from '@mui/icons-material/Settings';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import GroupIcon from '@mui/icons-material/Group';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 
-const AdminIconMenu = ({ onMenuClick }) => {
+const SurveyorIconMenu = ({ onMenuClick }) => {
     const { logout } = useAuth();
 
     const handleMenuItemClick = (id) => {
@@ -24,11 +21,9 @@ const AdminIconMenu = ({ onMenuClick }) => {
     };
 
     const menuItems = [
-        { id: 'UserManagement', text: 'User Management', icon: <PeopleIcon />, onClick: () => handleMenuItemClick('UserManagement') },
-        { id: 'SurveyManagement', text: 'Survey Management', icon: <DashboardIcon />, onClick: () => handleMenuItemClick('SurveyManagement') },
-        { id: 'OrganizationManagement', text: 'Organization Management', icon: <GroupIcon />, onClick: () => handleMenuItemClick('OrganizationManagement') },
-        { id: 'ProjectManagement', text: 'Project Management', icon: <AssignmentIcon />, onClick: () => handleMenuItemClick('ProjectManagement') },
-        { id: 'Analytics', text: 'Analytics & Reporting', icon: <AssessmentIcon />, onClick: () => handleMenuItemClick('Analytics') },
+        { id: 'MySurveys', text: 'My Surveys', icon: <DashboardIcon />, onClick: () => handleMenuItemClick('MySurveys') },
+        { id: 'SurveyResults', text: 'Survey Results', icon: <AssessmentIcon />, onClick: () => handleMenuItemClick('SurveyResults') },
+        { id: 'Tasks', text: 'Tasks & Assignments', icon: <AssignmentIcon />, onClick: () => handleMenuItemClick('Tasks') },
         { id: 'Notifications', text: 'Notifications', icon: <NotificationsIcon />, onClick: () => handleMenuItemClick('Notifications') },
         { id: 'Logout', text: 'Logout', icon: <ExitToAppIcon />, onClick: () => handleMenuItemClick('Logout') },
     ];
@@ -47,4 +42,4 @@ const AdminIconMenu = ({ onMenuClick }) => {
     );
 };
 
-export default AdminIconMenu;
+export default SurveyorIconMenu;

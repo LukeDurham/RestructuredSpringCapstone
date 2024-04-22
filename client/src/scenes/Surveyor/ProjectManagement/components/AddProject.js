@@ -1,37 +1,42 @@
 import React, { useState, useContext } from 'react';
-import { useAuth } from '../../../../scenes/utils/AuthContext'; // Ensure path is correct
+import { useAuth } from '../../../utils/AuthContext'; // Ensure path is correct
 import AdminSideBar from '../../../../components/AdminSideBar'; // Correct the path as necessary
 
-const EditProject = () => {
-    const [projectId, setProjectId] = useState('');
+const AddProject = () => {
     const [projectName, setProjectName] = useState('');
-    const { user } = useAuth();
-    const userId = user ? user.userId : null;
+    const { user } = useAuth(); // Access user from AuthContext
+    const userId = user ? user.userId : null; // Assuming 'user' has 'userId'
 
+    // Function to handle form submission
     const handleSubmit = async (event) => {
         event.preventDefault();
-        const updatedData = {
-            id: projectId,
+        const projectData = {
             name: projectName,
+            created_at: new Date().toISOString(),
+            created_by: userId,
+            updated_at: new Date().toISOString(),
             updated_by: userId,
-            updated_at: new Date().toISOString()
+            deleted_at: null,
+            deleted_by: null
         };
 
+        console.log('Submitting Project:', projectData);
+
         try {
-            const response = await fetch('/api/editProject', {
-                method: 'PUT',
+            const response = await fetch('/api/addProject', { // Changed API endpoint to match projects
+                method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(updatedData)
+                body: JSON.stringify(projectData)
             });
             if (response.ok) {
-                console.log('Project updated successfully');
-                setProjectId('');
-                setProjectName('');
+                console.log('Project added successfully');
+                // Additional logic on success, e.g., clear form, display message, navigate
             } else {
-                throw new Error('Failed to update project');
+                throw new Error('Failed to add project');
             }
         } catch (error) {
-            console.error('Error updating project:', error);
+            console.error('Error adding project:', error);
+            // Handle errors, e.g., display error message
         }
     };
 
@@ -39,18 +44,8 @@ const EditProject = () => {
         <div style={{ display: 'flex', height: '100vh' }}>
             <AdminSideBar />
             <div style={{ width: '40%', height: '40%', margin: 'auto' }}>
-                <h1>Edit Project</h1>
+                <h1>Add Project</h1>
                 <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                    <label htmlFor="projectId" style={{ marginBottom: '10px' }}>
-                        Project ID:
-                    </label>
-                    <input
-                        type="text"
-                        id="projectId"
-                        value={projectId}
-                        onChange={(e) => setProjectId(e.target.value)}
-                        style={{ width: '100%', padding: '8px', marginBottom: '20px' }}
-                    />
                     <label htmlFor="projectName" style={{ marginBottom: '10px' }}>
                         Project Name:
                     </label>
@@ -62,7 +57,7 @@ const EditProject = () => {
                         style={{ width: '100%', padding: '8px', marginBottom: '20px' }}
                     />
                     <button type="submit" style={{ padding: '10px 20px', cursor: 'pointer' }}>
-                        Update Project
+                        Add Project
                     </button>
                 </form>
             </div>
@@ -70,4 +65,4 @@ const EditProject = () => {
     );
 };
 
-export default EditProject;
+export default AddProject;
