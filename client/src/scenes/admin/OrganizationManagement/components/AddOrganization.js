@@ -1,6 +1,8 @@
 import React, { useState, useContext } from 'react';
 import { useAuth } from '../../../../scenes/utils/AuthContext'; // Ensure path is correct
 import AdminSideBar from '../../../../components/AdminSideBar'; // Correct the path as necessary
+import { Box, Button, Typography, TextField } from '@mui/material'; // Use MUI components for consistency
+
 
 const AddOrganization = () => {
     const [organizationName, setOrganizationName] = useState('');
@@ -41,27 +43,57 @@ const AddOrganization = () => {
     };
 
     return (
-        <div style={{ display: 'flex', height: '100vh' }}>
-            <AdminSideBar />
-            <div style={{ width: '40%', height: '40%', margin: 'auto' }}>
-                <h1>Add Organization</h1>
-                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                    <label htmlFor="organizationName" style={{ marginBottom: '10px' }}>
-                        Organization Name:
-                    </label>
-                    <input
-                        type="text"
-                        id="organizationName"
-                        value={organizationName}
-                        onChange={(e) => setOrganizationName(e.target.value)}
-                        style={{ width: '100%', padding: '8px', marginBottom: '20px' }}
-                    />
-                    <button type="submit" style={{ padding: '10px 20px', cursor: 'pointer' }}>
+        <Box display="flex" height="100vh"> {/* Flex layout for sidebar and content */}
+            <AdminSideBar /> {/* Sidebar */}
+            <Box
+                flex="1" // Remaining space
+                display="flex"
+                justifyContent="center"
+                alignItems="center" // Centering content vertically and horizontally
+                padding={3}
+            >
+                <Box
+                    bgcolor="#f0f0f0" // Light gray background for the form box
+                    padding={5} // Padding to create space
+                    borderRadius="10px" // Rounded corners
+                    boxShadow={3} // Light shadow for depth
+                    width="50%" // Form box width
+                >
+                    <Typography variant="h4" style={{ color: 'black' }} gutterBottom>
                         Add Organization
-                    </button>
-                </form>
-            </div>
-        </div>
+                    </Typography>
+                    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                        <Box>
+                            <Typography variant="subtitle1" style={{ color: 'black' }}>Organization Name:</Typography>
+                            <TextField
+                                type="text"
+                                id="organizationName"
+                                value={organizationName}
+                                onChange={(e) => setOrganizationName(e.target.value)}
+                                fullWidth
+                                variant="outlined"
+                                required
+                                InputProps={{
+                                    style: {
+                                        fontSize: '18px', // Increase font size
+                                        height: '50px', // Increase height to make it more square-shaped
+                                        borderRadius: '8px', // Rounded corners
+                                    },
+                                }}
+                            />
+                        </Box>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            type="submit"
+                            style={{ padding: '12px', fontSize: '16px' }}
+                        >
+                            Add Organization
+                        </Button>
+                    </form>
+                </Box>
+            </Box>
+        </Box>
     );
 };
 

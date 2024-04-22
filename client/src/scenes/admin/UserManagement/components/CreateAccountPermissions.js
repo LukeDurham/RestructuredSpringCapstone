@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import '../../../../global.css';
 import AdminSideBar from '../../../../components/AdminSideBar'; // Import AdminSideBar instead of AdminAppBar
 import './component.css';
+import { Box, Button, Typography } from '@mui/material';
 
 const CreateAccountPermissions = () => {
     const [roles, setRoles] = useState([
@@ -56,40 +57,90 @@ const CreateAccountPermissions = () => {
     };
 
     return (
-        <div style={{ display: 'flex' }}>
-            <AdminSideBar />
-            <div className="center-content">
-                <h2>{action === 'edit' ? 'Edit Role' : 'Create Account Permissions'}</h2>
-                <button onClick={() => setAction('edit')}>Edit Role</button>
-                <button onClick={() => setAction('create')}>Create Role</button>
-                <form onSubmit={handleSubmit} className="custom-form">
-                    {action === 'edit' && (
-                        <>
-                            <div className='custom-dropdown custom-dropdown-role'>
-                                <label>Select Role to Edit:</label>
-                                <select value={selectedRoleId} onChange={handleRoleChange} required>
-                                    <option value="">Select Role</option>
-                                    {roles.map((role) => (
-                                        <option key={role.id} value={role.id}>{role.name}</option>
-                                    ))}
-                                </select>
-                            </div>
-                            <div className='custom-dropdown custom-dropdown-role'>
-                                <label>New Role Name:</label>
-                                <input type="text" value={selectedRoleName} onChange={handleRoleNameChange} />
-                            </div>
-                        </>
-                    )}
-                    {action === 'create' && (
-                        <div className='custom-dropdown custom-dropdown-role'>
-                            <label>Role Name:</label>
-                            <input type="text" value={newRoleName} onChange={handleNewRoleNameChange} required />
-                        </div>
-                    )}
-                    <button type="submit">{action === 'edit' ? 'Update Role' : 'Submit'}</button>
-                </form>
-            </div>
-        </div>
+        <Box display="flex"> {/* Flex layout for sidebar and main content */}
+            <AdminSideBar /> {/* Sidebar */}
+            <Box
+                flex="1" // Main content should take the remaining space
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                height="100vh" // Full viewport height to center vertically
+                padding={6} // Padding to separate from sidebar
+            >
+                <Box
+                    bgcolor="#f0f0f0" // Light gray background
+                    padding={6} // Increased padding inside the box
+                    borderRadius="12px" // Rounded corners
+                    boxShadow={4} // Stronger shadow for depth
+                    width="600px" // Wider box
+                >
+                    <Typography variant="h4" gutterBottom style={{ color: 'black', fontSize: '36px' }}>
+                        {action === 'edit' ? 'Edit Role' : 'Create Account Permissions'}
+                    </Typography>
+                    <Box display="flex" justifyContent="space-between" marginBottom={4}> {/* Separate edit/create buttons */}
+                        <Button variant="contained" color="primary" onClick={() => setAction('edit')}>
+                            Edit Role
+                        </Button>
+                        <Button variant="contained" color="primary" onClick={() => setAction('create')}>
+                            Create Role
+                        </Button>
+                    </Box>
+                    <form onSubmit={handleSubmit}>
+                        <Box display="flex" flexDirection="column" gap={3}> {/* Using Box with gap for spacing */}
+                            {action === 'edit' && (
+                                <>
+                                    <Box>
+                                        <Typography style={{ color: 'black', fontSize: '16px' }}>Select Role to Edit:</Typography> {/* Larger text */}
+                                        <select
+                                            value={selectedRoleId}
+                                            onChange={handleRoleChange}
+                                            required
+                                            style={{ padding: '12px', borderRadius: '6px', fontSize: '16px', width: '100%' }} // Consistent styling
+                                        >
+                                            <option value="">Select Role</option>
+                                            {roles.map((role) => (
+                                                <option key={role.id} value={role.id}>
+                                                    {role.name}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </Box>
+                                    <Box>
+                                        <Typography style={{ color: 'black', fontSize: '16px' }}>New Role Name:</Typography>
+                                        <input
+                                            type="text"
+                                            value={selectedRoleName}
+                                            onChange={handleRoleNameChange}
+                                            style={{ padding: '12px', borderRadius: '6px', fontSize: '16px', width: '100%' }}
+                                        />
+                                    </Box>
+                                </>
+                            )}
+                            {action === 'create' && (
+                                <Box>
+                                    <Typography style={{ color: 'black', fontSize: '16px' }}>Role Name:</Typography>
+                                    <input
+                                        type="text"
+                                        value={newRoleName}
+                                        onChange={handleNewRoleNameChange}
+                                        required
+                                        style={{ padding: '12px', borderRadius: '6px', fontSize: '16px', width: '100%' }}
+                                    />
+                                </Box>
+                            )}
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                type="submit"
+                                style={{ padding: '12px', fontSize: '16px' }} // Consistent button styling
+                            >
+                                {action === 'edit' ? 'Update Role' : 'Submit'}
+                            </Button>
+                        </Box>
+                    </form>
+                </Box>
+            </Box>
+        </Box>
     );
 };
 

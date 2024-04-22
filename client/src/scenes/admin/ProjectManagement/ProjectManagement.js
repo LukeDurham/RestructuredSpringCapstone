@@ -26,13 +26,18 @@ const ProjectManagement = () => {
     // Styling for the buttons
     const buttonStyle = {
         color: 'white', // White text
-        backgroundColor: 'purple', // Purple background
-        padding: '10px 20px',
-        margin: '10px',
-        border: 'none',
-        borderRadius: '8px', // Rounded corners
-        fontSize: '16px', // Font size
-        cursor: 'pointer'
+        backgroundColor: '#494848', // Dark background
+        padding: '10px', // Increased padding for larger buttons
+        margin: '10px', // Adjusted margin for spacing
+        border: '2px solid white',
+        borderRadius: '10px', // Rounded corners
+        fontSize: '20px', // Larger font size
+        cursor: 'pointer',
+        width: '350px', // Wider button
+        height: '350px', // Taller button
+        display: 'flex', // Flexbox to center text
+        alignItems: 'center', // Center text vertically
+        justifyContent: 'center', // Center text horizontally
     };
 
     // Container styling for the project management section

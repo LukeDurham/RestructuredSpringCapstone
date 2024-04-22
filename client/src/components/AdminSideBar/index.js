@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../scenes/utils/AuthContext'; // Ensure correct path
 import { StyledSideBar } from './styles';
 import AdminIconMenu from '../AdminIconMenu';
+import { updateBackgroundColor } from '../Background/UpdateBackground';
 
 const AdminSideBar = () => {
     const navigate = useNavigate();

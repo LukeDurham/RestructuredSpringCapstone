@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../../../../global.css';
+import { Box, Button, Typography } from '@mui/material';
 import AdminSideBar from '../../../../components/AdminSideBar';
 
 const AssignUserRole = () => {
@@ -74,33 +75,73 @@ const AssignUserRole = () => {
 
 
     return (
-        <div style={{ display: 'flex' }}>
-            <AdminSideBar />
-            <div className={"center-content"}>
-                <h2>Assign User Role</h2>
-                <form onSubmit={handleSubmit} className="custom-form">
-                    <div className='custom-dropdown custom-dropdown-user'>
-                        <label>User Email:</label>
-                        <select value={selectedUserId} onChange={handleUserChange} required>
-                            <option value="">Select User Email</option>
-                            {users.map((user) => (
-                                <option key={user.id} value={user.id}>{user.email}</option>
-                            ))}
-                        </select>
-                    </div>
-                    <div className='custom-dropdown custom-dropdown-role'>
-                        <label>Role:</label>
-                        <select value={selectedRole} onChange={handleRoleChange} required>
-                            <option value="">Select Role</option>
-                            {roles.map((role) => (
-                                <option key={role.id} value={role.id}>{role.name}</option>
-                            ))}
-                        </select>
-                    </div>
-                    <button type="submit">Assign Role</button>
-                </form>
-            </div>
-        </div>
+        <Box display="flex"> {/* Flex layout for sidebar and main content */}
+            <AdminSideBar /> {/* Sidebar */}
+            <Box
+                flex="1" // Main content should take the remaining space
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                height="100vh" // Full viewport height to center vertically
+                padding={6} // Padding to separate from sidebar
+            >
+                <Box
+                    bgcolor="#f0f0f0" // Light gray background
+                    padding={6} // Increased padding inside the box
+                    borderRadius="12px" // Rounded corners for a softer look
+                    boxShadow={4} // Stronger shadow for more depth
+                    width="600px" // Wide box to accommodate larger elements
+                >
+                    <Typography variant="h4" gutterBottom style={{ color: 'black', fontSize: '36px' }}>
+                        Assign User Role
+                    </Typography>
+                    <form onSubmit={handleSubmit}>
+                        <Box display="flex" flexDirection="column" gap={3}> {/* Use a Box with gap for spacing */}
+                            <Box>
+                                <label style={{ color: 'black', fontSize: '16px' }}>User Email:</label> {/* Larger text */}
+                                <select
+                                    value={selectedUserId}
+                                    onChange={handleUserChange}
+                                    required
+                                    style={{ padding: '12px', borderRadius: '6px', fontSize: '16px', width: '100%' }} // Larger padding and font size
+                                >
+                                    <option value="">Select User Email</option>
+                                    {users.map((user) => (
+                                        <option key={user.id} value={user.id}>
+                                            {user.email}
+                                        </option>
+                                    ))}
+                                </select>
+                            </Box>
+                            <Box>
+                                <label style={{ color: 'black', fontSize: '16px' }}>Role:</label> {/* Larger text */}
+                                <select
+                                    value={selectedRole}
+                                    onChange={handleRoleChange}
+                                    required
+                                    style={{ padding: '12px', borderRadius: '6px', fontSize: '16px', width: '100%' }} // Similar styling
+                                >
+                                    <option value="">Select Role</option>
+                                    {roles.map((role) => (
+                                        <option key={role.id} value={role.id}>
+                                            {role.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </Box>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                type="submit"
+                                style={{ padding: '12px', fontSize: '16px' }} // Larger button with appropriate padding
+                            >
+                                Assign Role
+                            </Button>
+                        </Box>
+                    </form>
+                </Box>
+            </Box>
+        </Box>
     );
 };
 

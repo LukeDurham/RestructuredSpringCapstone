@@ -25,30 +25,34 @@ const SurveyManagement = () => {
         // Styling for the buttons
         const topRowButtonStyle = {
             color: 'white', // White text
-            backgroundColor: 'purple', // Purple background
-            padding: '5px 10px',
-            margin: '10px -225px',
-            border: 'none',
-            borderRadius: '8px', // Rounded corners for the square
-            fontSize: '16px', // Font size
+            backgroundColor: '#494848', // Dark background
+            padding: '10px', // Increased padding for larger buttons
+            margin: '10px', // Adjusted margin for spacing
+            border: '2px solid white',
+            borderRadius: '10px', // Rounded corners
+            fontSize: '20px', // Larger font size
             cursor: 'pointer',
-            width: '120px',
-            height: '120px', // Fixed width for consistency
-            display: 'block' // Ensure buttons are on separate lines
+            width: '350px', // Wider button
+            height: '350px', // Taller button
+            display: 'flex', // Flexbox to center text
+            alignItems: 'center', // Center text vertically
+            justifyContent: 'center', // Center text horizontally
         };
-
+        
+        // Bottom row button style with customization
         const bottomRowButtonStyle = {
-            ...topRowButtonStyle,  // Inherits properties from topRowButtonStyle
-            margin: '10px -285px',  // More space on the sides for the bottom row
-            backgroundColor: 'purple',  // Just an example to differentiate if needed
+            ...topRowButtonStyle, // Inherits properties from topRowButtonStyle
+            backgroundColor: '#494848', // Different color for differentiation
         };
-
-        // Style object for row containers
-        // Style object for the top row container
+        
+        // Updated style for the row container
         const rowContainerStyle = {
-            display: 'flex',
-            justifyContent: 'space-evenly', // This spreads the buttons evenly
-            marginBottom: '2px' // Adds space between the two rows
+            display: 'flex', // Flex layout
+            
+            justifyContent: 'center', // Center vertically
+            alignItems: 'center', // Center horizontally
+            height: '30vh', // Full viewport height for centering vertically
+            padding: '20px', // Padding around the container
         };
 
 

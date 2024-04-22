@@ -11,3 +11,14 @@ export const StyledSideBar = styled(ProSidebar)({
     // Additional styling..
     // Add any additional styling here
 });
+export const StyledButton = styled('button')({
+    position: 'absolute',
+    top: '20px',
+    right: '20px',
+    padding: '10px',
+    borderRadius: '5px',
+    background: '#000',
+    color: '#FFF',
+    border: 'none',
+    cursor: 'pointer',
+});

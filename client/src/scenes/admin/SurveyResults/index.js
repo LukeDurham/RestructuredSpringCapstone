@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, TextField } from '@mui/material';
+import { Button, TextField, CircularProgress, Box, Typography } from '@mui/material';
 import PieChart from '../../../components/PieChart';
 
 const SurveyResults = () => {
@@ -12,69 +12,93 @@ const SurveyResults = () => {
     const handleSearch = async () => {
         setLoading(true);
         setError('');
-
-        // Log the Survey ID and Question ID being sent
-        console.log("Sending search for Survey ID:", surveyId, "and Question ID:", questionId);
+        setData(null); // Clear previous data
 
         try {
-            // Assuming you need to pass these as query parameters
             const url = new URL('/api/surveyanalytics', window.location.origin);
             url.searchParams.append('surveyId', surveyId);
             url.searchParams.append('questionId', questionId);
 
-            // Log the URL to which the request is being sent
-            console.log("Request URL:", url.href);
-
-            const response = await fetch(url);
+            const response = await fetch(url.href);
             if (!response.ok) {
-                const errorData = await response.json(); // Assumes the server sends a JSON response even on errors
-                console.error("Failed to fetch data:", errorData);
+                const errorData = await response.json();
                 throw new Error(errorData.message || 'Failed to fetch data');
             }
-            const result = await response.json();
 
-            // Transform the result to the expected format for the pie chart
-            const formattedData = result.map(item => ({
-                id: item.response,  // 'id' should be a unique identifier for pie chart slices
-                value: item.count   // 'value' should be numeric
+            const result = await response.json();
+            const formattedData = result.map((item) => ({
+                id: item.response, // Pie chart ID
+                value: item.count, // Pie chart value
             }));
 
             setData(formattedData);
         } catch (err) {
-            console.error("Error during fetch:", err);
             setError(err.message);
         } finally {
             setLoading(false);
         }
     };
 
-
-
     return (
-        <div>
-            <h1>Survey Results</h1>
-            <TextField
-                label="Survey ID"
-                value={surveyId}
-                onChange={(e) => setSurveyId(e.target.value)}
-                type="number"
-                margin="normal"
-                variant="outlined"
-            />
-            <TextField
-                label="Question ID"
-                value={questionId}
-                onChange={(e) => setQuestionId(e.target.value)}
-                type="number"
-                margin="normal"
-                variant="outlined"
-            />
-            <Button onClick={handleSearch} variant="contained" color="primary" disabled={loading}>
-                Search
-            </Button>
-            {error && <p>Error: {error}</p>}
-            {data && <PieChart data={data} />}
-        </div>
+        
+        <Box
+            display="flex"
+            flexDirection="column"
+            justifyContent="center"
+            alignItems="center"
+            height="100vh" // Full viewport height to center vertically
+            padding={3}
+        >
+            <Typography variant="h4" gutterBottom>
+                Survey Results
+            </Typography>
+            <Box
+                bgcolor="#f0f0f0" // Light gray background
+                padding={3}
+                borderRadius="8px" // Rounded corners
+                boxShadow={2} // Light shadow for depth
+            >
+                <Box display="flex" justifyContent="center" alignItems="center" gap={2}>
+                    <TextField
+                        label="Survey ID"
+                        value={surveyId}
+                        onChange={(e) => setSurveyId(e.target.value)}
+                        type="number"
+                        variant="outlined"
+                        fullWidth // Make it fill available space
+                        size="medium" // Larger size
+                    />
+                    <TextField
+                        label="Question ID"
+                        value={questionId}
+                        onChange={(e) => setQuestionId(e.target.value)}
+                        type="number"
+                        variant="outlined"
+                        fullWidth
+                        size="medium" // Larger size
+                    />
+                    <Button
+                        onClick={handleSearch}
+                        variant="contained"
+                        color="primary"
+                        fullWidth
+                        disabled={loading}
+                    >
+                        {loading ? <CircularProgress size={20} color="inherit" /> : 'Search'}
+                    </Button>
+                </Box>
+            </Box>
+            {error && (
+                <Typography variant="body1" color="error" marginTop={2}>
+                    Error: {error}
+                </Typography>
+            )}
+            {data && (
+                <Box marginTop={3}>
+                    <PieChart data={data} />
+                </Box>
+            )}
+        </Box>
     );
 };
 
