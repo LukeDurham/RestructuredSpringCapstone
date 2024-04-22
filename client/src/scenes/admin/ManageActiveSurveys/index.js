@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { CircularProgress, Box, Typography, Button } from '@mui/material';
 
+
 const ManageActiveSurveys = () => {
     const [surveys, setSurveys] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -54,18 +55,40 @@ const ManageActiveSurveys = () => {
             flexDirection="column"
             alignItems="center"
             justifyContent="center"
-            height="100vh"
+            height="100vh" // Full viewport height
+            padding={4} // Additional padding for breathing room
         >
-            <Typography variant="h4" gutterBottom style={{ color: 'black' }}>
+            <Typography variant="h3" gutterBottom style={{ color: 'black' }}> {/* Larger heading */}
                 Manage Active Surveys
             </Typography>
-            {loading && <CircularProgress />}
-            {error && <Typography color="error">{error}</Typography>}
+            {loading && <CircularProgress size={50} />} {/* Larger loading spinner */}
+            {error && (
+                <Typography variant="body1" color="error" style={{ fontSize: '18px' }}>
+                    {error}
+                </Typography>
+            )}
             {!loading && !error && surveys.map((survey) => (
-                <Box key={survey.id} m={1} p={2} bgcolor="#f0f0f0" boxShadow={2} borderRadius={2}>
-                    <Typography variant="h6" style={{ color: 'black' }}>{survey.title}</Typography>
-                    <Typography style={{ color: 'black' }}>{survey.description}</Typography>
-                    <Button color="secondary" variant="contained" onClick={() => handleDeactivate(survey.id)}>
+                <Box
+                    key={survey.id}
+                    m={2} // Increase margin between survey boxes
+                    p={3} // Increase padding within survey boxes
+                    bgcolor="#f0f0f0" // Light gray background
+                    boxShadow={3} // Stronger shadow for depth
+                    borderRadius={4} // More pronounced rounding
+                    width="80%" // Make the boxes wider
+                >
+                    <Typography variant="h5" style={{ color: 'black', fontSize: '20px' }}>
+                        {survey.title}
+                    </Typography>
+                    <Typography style={{ color: 'black', fontSize: '18px' }}>
+                        {survey.description}
+                    </Typography>
+                    <Button
+                        color="secondary"
+                        variant="contained"
+                        onClick={() => handleDeactivate(survey.id)}
+                        style={{ fontSize: '16px', padding: '10px 20px' }} // Larger button
+                    >
                         Deactivate
                     </Button>
                 </Box>
@@ -73,5 +96,6 @@ const ManageActiveSurveys = () => {
         </Box>
     );
 };
+
 
 export default ManageActiveSurveys;
