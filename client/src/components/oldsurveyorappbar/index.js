@@ -5,7 +5,7 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import MenuIcon from '@mui/icons-material/Menu';
-import ToggleColorMode from '../../components/ToggleColorMode';
+import ToggleColorMode from '../ToggleColorMode.js';
 import MenuItem from '@mui/material/MenuItem';
 import appBarStyles from './styles.js'; // Importing styles
 import { useTheme } from '@mui/material/styles'; // Import useTheme

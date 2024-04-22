@@ -38,7 +38,7 @@ const useStyles = makeStyles(theme => ({
 
 
 
-export const SurveyCreatorComponent = ({ setSuccessMessage, setErrorMessage }) => {
+export const SurveyEditorComponent = ({ setSuccessMessage, setErrorMessage }) => {
     
     
 
@@ -558,4 +558,4 @@ export const SurveyCreatorComponent = ({ setSuccessMessage, setErrorMessage }) =
 
 };
 
-export default SurveyCreatorComponent;
+export default SurveyEditorComponent;

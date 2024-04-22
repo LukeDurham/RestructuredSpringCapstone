@@ -1,107 +1,52 @@
-import { ResponsivePie } from "@nivo/pie";
-import { tokens } from "../../theme";
-import { useTheme } from "@mui/material";
+import React from 'react';
+import { ResponsivePie } from '@nivo/pie';
+import { Typography } from '@mui/material';
 
-const PieChart = ({ data }) => {
-    const theme = useTheme();
-    const colors = tokens(theme.palette.mode);
+const PieChart = ({ data, title }) => {
     return (
-        <ResponsivePie
-            data={data}
-            theme={{
-                axis: {
-                    domain: {
-                        line: {
-                            stroke: colors.grey[100],
-                        },
-                    },
-                    legend: {
-                        text: {
-                            fill: colors.grey[100],
-                        },
-                    },
-                    ticks: {
-                        line: {
-                            stroke: colors.grey[100],
-                            strokeWidth: 1,
-                        },
-                        text: {
-                            fill: colors.grey[100],
-                        },
-                    },
-                },
-                legends: {
-                    text: {
-                        fill: colors.grey[100],
-                    },
-                },
-            }}
-            margin={{ top: 40, right: 80, bottom: 80, left: 80 }}
-            innerRadius={0.5}
-            padAngle={0.7}
-            cornerRadius={3}
-            activeOuterRadiusOffset={8}
-            borderColor={{
-                from: "color",
-                modifiers: [["darker", 0.2]],
-            }}
-            arcLinkLabelsSkipAngle={10}
-            arcLinkLabelsTextColor={colors.grey[100]}
-            arcLinkLabelsThickness={2}
-            arcLinkLabelsColor={{ from: "color" }}
-            enableArcLabels={false}
-            arcLabelsRadiusOffset={0.4}
-            arcLabelsSkipAngle={7}
-            arcLabelsTextColor={{
-                from: "color",
-                modifiers: [["darker", 2]],
-            }}
-            defs={[
-                {
-                    id: "dots",
-                    type: "patternDots",
-                    background: "inherit",
-                    color: "rgba(255, 255, 255, 0.3)",
-                    size: 4,
-                    padding: 1,
-                    stagger: true,
-                },
-                {
-                    id: "lines",
-                    type: "patternLines",
-                    background: "inherit",
-                    color: "rgba(255, 255, 255, 0.3)",
-                    rotation: -45,
-                    lineWidth: 6,
-                    spacing: 10,
-                },
-            ]}
-            legends={[
-                {
-                    anchor: "bottom",
-                    direction: "row",
-                    justify: false,
-                    translateX: 0,
-                    translateY: 56,
-                    itemsSpacing: 0,
-                    itemWidth: 100,
-                    itemHeight: 18,
-                    itemTextColor: "#999",
-                    itemDirection: "left-to-right",
-                    itemOpacity: 1,
-                    symbolSize: 18,
-                    symbolShape: "circle",
-                    effects: [
-                        {
-                            on: "hover",
-                            style: {
-                                itemTextColor: "#000",
+        <div style={{ height: "600px", width: "600px" }}> {/* Increase the height and width */}
+            <Typography variant="h6" style={{ textAlign: 'center', marginBottom: '20px' }}>
+                {title}
+            </Typography>
+            <ResponsivePie
+                data={data}
+                margin={{ top: 80, right: 120, bottom: 120, left: 120 }} // Adjusted margin for a larger view
+                innerRadius={0.5}
+                padAngle={1}
+                cornerRadius={3}
+                activeOuterRadiusOffset={12} // Slightly increased for better interaction
+                colors={{ scheme: 'nivo' }} // Using a built-in color scheme
+                borderColor={{ from: 'color', modifiers: [['darker', 0.6]] }}
+                arcLinkLabelsTextColor="#333333"
+                arcLinkLabelsThickness={3} // Slightly thicker labels for better visibility
+                arcLabelsTextColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
+                legends={[
+                    {
+                        anchor: 'bottom',
+                        direction: 'row',
+                        justify: false,
+                        translateX: 0,
+                        translateY: 70, // Adjust for larger size
+                        itemsSpacing: 5, // More spacing between legend items
+                        itemWidth: 150, // Wider legend items
+                        itemHeight: 24, // Taller legend items for better readability
+                        itemTextColor: '#999',
+                        itemDirection: 'left-to-right',
+                        itemOpacity: 1,
+                        symbolSize: 24, // Larger symbol size
+                        symbolShape: 'circle',
+                        effects: [
+                            {
+                                on: 'hover',
+                                style: {
+                                    itemTextColor: '#000',
+                                },
                             },
-                        },
-                    ],
-                },
-            ]}
-        />
+                        ],
+                    },
+                ]}
+            />
+        </div>
     );
 };
 

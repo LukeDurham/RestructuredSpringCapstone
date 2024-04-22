@@ -181,6 +181,8 @@ app.post('/api/addOrganization', async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 });
+
+
 //adding project
 app.post('/api/addProject', async (req, res) => {
     const { name, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by } = req.body;
@@ -199,6 +201,113 @@ app.post('/api/addProject', async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 });
+
+app.delete('/api/removeProject', async (req, res) => {
+    const { id, deleted_by } = req.body;
+
+    try {
+        const currentTimestamp = new Date(); // Get the current date and time for the deletion timestamp
+        const result = await pool.query(
+            `UPDATE projects
+            SET deleted_at = $1, deleted_by = $2
+            WHERE id = $3 AND deleted_at IS NULL
+            RETURNING *;`, // Ensures only undeleted projects are marked as deleted
+            [currentTimestamp, deleted_by, id]
+        );
+
+        if (result.rows.length > 0) {
+            // Successfully marked the project as deleted
+            res.status(200).json(result.rows[0]);
+        } else {
+            // No rows updated, possibly because the project was already deleted or does not exist
+            res.status(404).json({ error: 'Project not found or already deleted' });
+        }
+    } catch (err) {
+        console.error('Error removing project:', err);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+app.put('/api/editProject', async (req, res) => {
+    const { id, name, updated_by } = req.body;
+
+    try {
+        const currentTimestamp = new Date(); // Get the current date and time for the update timestamp
+        const result = await pool.query(
+            `UPDATE projects
+            SET name = $1, updated_at = $2, updated_by = $3
+            WHERE id = $4 AND deleted_at IS NULL
+            RETURNING *;`, // Ensures only undeleted projects are updated
+            [name, currentTimestamp, updated_by, id]
+        );
+
+        if (result.rows.length > 0) {
+            // Successfully updated the project
+            res.status(200).json(result.rows[0]);
+        } else {
+            // No rows updated, possibly because the project does not exist or has been deleted
+            res.status(404).json({ error: 'Project not found or deleted' });
+        }
+    } catch (err) {
+        console.error('Error editing project:', err);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+
+app.post('/api/removeOrganization', async (req, res) => {
+    const { id, deleted_by } = req.body;
+
+    try {
+        const currentTimestamp = new Date(); // Get the current date and time for the deletion timestamp
+        const result = await pool.query(
+            `UPDATE organizations
+            SET deleted_at = $1, deleted_by = $2
+            WHERE id = $3 AND deleted_at IS NULL
+            RETURNING *;`, // This query ensures only undeleted organizations are marked as deleted
+            [currentTimestamp, deleted_by, id]
+        );
+
+        if (result.rows.length > 0) {
+            // Successfully marked the organization as deleted
+            res.status(200).json(result.rows[0]);
+        } else {
+            // No rows updated, possibly because the organization was already deleted or does not exist
+            res.status(404).json({ error: 'Organization not found or already deleted' });
+        }
+    } catch (err) {
+        console.error('Error removing organization:', err);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+app.put('/api/editOrganization', async (req, res) => {
+    const { id, name, updated_by } = req.body;
+
+    try {
+        const currentTimestamp = new Date(); // Get the current date and time for the update timestamp
+        const result = await pool.query(
+            `UPDATE organizations
+            SET name = $1, updated_at = $2, updated_by = $3
+            WHERE id = $4 AND deleted_at IS NULL
+            RETURNING *;`, // This query ensures only undeleted organizations are updated
+            [name, currentTimestamp, updated_by, id]
+        );
+
+        if (result.rows.length > 0) {
+            // Successfully updated the organization
+            res.status(200).json(result.rows[0]);
+        } else {
+            // No rows updated, possibly because the organization does not exist or has been deleted
+            res.status(404).json({ error: 'Organization not found or deleted' });
+        }
+    } catch (err) {
+        console.error('Error editing organization:', err);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+
 
 
 
@@ -813,6 +922,31 @@ app.get("/api/active_surveys", async (req, res) => {
         res.json(rows);
     } catch (error) {
         console.error('Error fetching active surveys with template details', error);
+        res.status(500).send('Server error');
+    }
+});
+
+app.post("/api/deactivate_surveys", async (req, res) => {
+    const { surveyId } = req.body;  // Extract the survey ID from the request body
+
+    if (!surveyId) {
+        return res.status(400).send('Survey ID is required');
+    }
+
+    try {
+        const sqlQuery = `
+            UPDATE surveys
+            SET "isActive" = false
+            WHERE id = $1
+            RETURNING *;  // Optional: return the updated survey row
+        `;
+        const { rows } = await pool.query(sqlQuery, [surveyId]);
+        if (rows.length === 0) {
+            return res.status(404).send('Survey not found');
+        }
+        res.json(rows[0]);  // Send back the deactivated survey data
+    } catch (error) {
+        console.error('Error deactivating survey:', error);
         res.status(500).send('Server error');
     }
 });
