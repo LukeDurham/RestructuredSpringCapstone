@@ -32,7 +32,7 @@ const Header = () => {
                     {mode === 'dark' ? <LightModeIcon /> : <DarkModeIcon />}
                 </IconButton>
                 <Typography variant="h1" component="div" style={{ flexGrow: 1, textAlign: 'center' }}>
-                    InsightPro
+                    
                 </Typography>
                 {/* Navigation Buttons */}
                 <Button color="inherit" onClick={() => navigate('/')}>Home</Button>

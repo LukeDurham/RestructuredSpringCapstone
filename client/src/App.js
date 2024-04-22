@@ -62,7 +62,7 @@ import RemoveProject from './scenes/admin/ProjectManagement/components/RemovePro
 import EditProject from './scenes/admin/ProjectManagement/components/EditProject.js';
 
 
-
+import SurveyResults from './scenes/admin/SurveyResults/index.js';
 import RespondentDashboard from './scenes/Respondent/RespondentDashboard.js';
 import ActiveSurveys from './scenes/Respondent/components/ActiveSurveys';
 import TakeSurvey from './scenes/Respondent/components/TakeSurvey';
@@ -120,7 +120,7 @@ function App() {
             <Route path="/admin/user_management" element={<UserManagement />} />
 
             {/* usermanagement components */}
-            
+            <Route path="/admin/Analytics" element={<SurveyResults />} />
             <Route path="/admin/assign-user-permissions" element={<AssignUserPermissions />} />
             <Route path="/admin/assign-user-role" element={<AssignUserRole />} />
             <Route path="/admin/create-account-permissions" element={<CreateAccountPermissions />} />

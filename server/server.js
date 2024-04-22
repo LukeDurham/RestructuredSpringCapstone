@@ -477,6 +477,67 @@ app.post("/api/addQuestions", async (req, res) => {
     }
 });
 
+// POST endpoint to accept responses
+app.post('/api/surveys/:surveyId/responses', async (req, res) => {
+    const { surveyId } = req.params;
+    const responses = req.body;
+
+    try {
+        responses.forEach(async (response) => {
+            const { question_id, response: answer, created_at, created_by, updated_at, updated_by } = response;
+            await pool.query(
+                'INSERT INTO responses (question_id, survey_id, response, created_at, created_by, updated_at, updated_by) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+                [question_id, surveyId, answer, created_at, created_by, updated_at, updated_by]
+            );
+        });
+        res.status(200).json({ message: 'Responses saved successfully' });
+    } catch (error) {
+        console.error('Error saving responses:', error);
+        res.status(500).json({ message: 'Failed to save responses' });
+    }
+});
+
+
+// Route to get responses by survey_id and question_id
+// Route to get responses by survey_id and question_id
+app.get('/api/surveyanalytics', async (req, res) => {
+    const { surveyId, questionId } = req.query; // Using req.query if parameters are sent as query strings
+
+    // Logging the received parameters
+    console.log("Received surveyId:", surveyId);
+    console.log("Received questionId:", questionId);
+
+    try {
+        const query = `
+            SELECT response, COUNT(*) AS count
+            FROM responses
+            WHERE survey_id = $1 AND question_id = $2
+            GROUP BY response;
+        `;
+        const values = [surveyId, questionId];
+
+        // Logging the values that will be used in the query
+        console.log("Query values:", values);
+
+        const { rows } = await pool.query(query, values);
+
+        // Log the results from the query
+        console.log("Query results:", rows);
+
+        if (rows.length === 0) {
+            console.log("No responses found for the survey and question IDs provided.");
+            return res.status(404).json({ message: "No responses found for the specified survey and question." });
+        }
+        res.json(rows);
+    } catch (err) {
+        console.error('Error executing query', err.stack);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
+
+
+
 
 
 
