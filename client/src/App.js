@@ -3,6 +3,11 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import HomePage from './scenes/common/HomePage';
 import Login from './scenes/Login';
 import About from './scenes/common/About';
+import Support from './scenes/common/Support';
+import { CssBaseline } from '@mui/material';
+import { ThemeProvider } from './ThemeContext';
+import Header from './components/Header'
+
 
 // import Survey from './scenes/survey/Survey';
 
@@ -39,8 +44,9 @@ import AddQuestionType from './scenes/survey/alterSurveys/AddQuestionType';
 import AdminDashboard from './scenes/admin/AdminDashboard';
 import SurveyorDashboard from './scenes/survey/SurveyDashboard.js';
 
+import EditSurvey from './scenes/admin/EditSurvey/index.js';
 
-import SurveyDashboard from './scenes/Surveyor/SurveyorDashboard.js';
+import SurveyDashboard from './scenes/oldSurveyor/SurveyorDashboard.js';
 import AddQuestion from './scenes/admin/AddQuestion';
 import CreateSurveyTemplate from './scenes/admin/CreateSurveyTemplate';
 import CreateSurvey from './scenes/admin/CreateSurvey';
@@ -57,15 +63,19 @@ import RemoveProject from './scenes/admin/ProjectManagement/components/RemovePro
 import EditProject from './scenes/admin/ProjectManagement/components/EditProject.js';
 
 
-
+import SurveyResults from './scenes/admin/SurveyResults/index.js';
 import RespondentDashboard from './scenes/Respondent/RespondentDashboard.js';
 import ActiveSurveys from './scenes/Respondent/components/ActiveSurveys';
 import TakeSurvey from './scenes/Respondent/components/TakeSurvey';
+import MainLayout from './components/NoLoginLayout/index.js';
+import ManageActiveSurveys from './scenes/admin/ManageActiveSurveys/index.js';
 
 
 function App() {
   const [backendData, setBackendData] = useState(null);
   const [loading, setLoading] = useState(true);
+  
+
 
   useEffect(() => {
     fetch("/api")
@@ -86,82 +96,93 @@ function App() {
 
 
   return (
-    <BrowserRouter>
-      <Routes>
-        {/* regular login dashboard for respondents */}
-        {<Route path="/surveyordashboard" element={<SurveyDashboard />} /> }
-        
+    <ThemeProvider>
+      <BrowserRouter>
+        {/* <Header /> */}
+          <Routes>
+
+          {/* MainLayout routes that include the Header */}
+          <Route path="/" element={<MainLayout />}>
+            <Route index element={<HomePage />} />
+            <Route path="login" element={<Login />} />
+            <Route path="about" element={<About />} />
+            <Route path="support" element={<Support />} />
+          </Route>
+            {/* regular login dashboard for respondents */}
+            
 
 
 
-        {/* Admin routes */}
-        <Route path="/admin/dashboard" element={<AdminDashboard />} /> 
-        
+            {/* Admin routes */}
+            <Route path="/admin/dashboard" element={<AdminDashboard />} /> 
+            
 
-        {/* usermanagement binding page */}
-        <Route path="/admin/user_management" element={<UserManagement />} />
+            {/* usermanagement binding page */}
+            <Route path="/admin/user_management" element={<UserManagement />} />
 
-        {/* usermanagement components */}
-        
-        <Route path="/admin/assign-user-permissions" element={<AssignUserPermissions />} />
-        <Route path="/admin/assign-user-role" element={<AssignUserRole />} />
-        <Route path="/admin/create-account-permissions" element={<CreateAccountPermissions />} />
-        <Route path="/admin/createuser" element={<CreateUser />} />
-        <Route path="/admin/createuser-role" element={<CreateUserRole />} />
-
-        
-
-
-        <Route path="/admin/survey_management" element={<SurveyManagement />} />
-
-        {/* surveymanagment */}
-        <Route path="/admin/CreateSurveyTemplate" element={<CreateSurveyTemplate />} />
-        <Route path="/admin/addQuestion" element={<AddQuestion />} />
-        <Route path="/admin/CreateSurvey" element={<CreateSurvey />} />
-        
-        
-        
-        
-        {/* organizations */}
-        <Route path="/admin/organization_management" element={<OrganizationManagement />} />
-        
-        
-        {/* organization management */}
-        <Route path="/admin/organization/add" element={<AddOrganization />} />
-        <Route path="/admin/organization/remove" element={<RemoveOrganization />} />
-        <Route path="/admin/organization/edit" element={<EditOrganization />} />
+            {/* usermanagement components */}
+            <Route path="/admin/Analytics" element={<SurveyResults />} />
+            <Route path="/admin/assign-user-permissions" element={<AssignUserPermissions />} />
+            <Route path="/admin/assign-user-role" element={<AssignUserRole />} />
+            <Route path="/admin/create-account-permissions" element={<CreateAccountPermissions />} />
+            <Route path="/admin/createuser" element={<CreateUser />} />
+            <Route path="/admin/createuser-role" element={<CreateUserRole />} />
+            <Route path="/admin/edit-survey" element={<EditSurvey />} />
+            <Route path="/admin/ManageActiveSurveys" element={<ManageActiveSurveys />} />
 
 
-        {/* Projects */}
-        <Route path="/admin/project_management" element={<ProjectManagement />} />
+            
 
 
-        {/* project management */}
-        <Route path="/admin/project/add" element={<AddProject />} />
-        <Route path="/admin/project/remove" element={<RemoveProject />} />
-        <Route path="/admin/project/edit" element={<EditProject />} />
+            <Route path="/admin/survey_management" element={<SurveyManagement />} />
+
+            {/* surveymanagment */}
+            <Route path="/admin/CreateSurveyTemplate" element={<CreateSurveyTemplate />} />
+            <Route path="/admin/addQuestion" element={<AddQuestion />} />
+            <Route path="/admin/CreateSurvey" element={<CreateSurvey />} />
+            
+            
+            
+            
+            {/* organizations */}
+            <Route path="/admin/organization_management" element={<OrganizationManagement />} />
+            
+            
+            {/* organization management */}
+            <Route path="/admin/organization/add" element={<AddOrganization />} />
+            <Route path="/admin/organization/remove" element={<RemoveOrganization />} />
+            <Route path="/admin/organization/edit" element={<EditOrganization />} />
 
 
+            {/* Projects */}
+            <Route path="/admin/project_management" element={<ProjectManagement />} />
 
 
-       
+            {/* project management */}
+            <Route path="/admin/project/add" element={<AddProject />} />
+            <Route path="/admin/project/remove" element={<RemoveProject />} />
+            <Route path="/admin/project/edit" element={<EditProject />} />
 
-        {/* Respondent routes */}
-        <Route path="/respondent/dashboard" element={<RespondentDashboard />} />
-        <Route path="/respondent/activesurveys" element={<ActiveSurveys/>} />
-        <Route path="/TakeSurvey/:surveyId" element={<TakeSurvey />} />
-
-
-        {/* Surveyor routes */}
-        {/* <Route path="/surveyor/dashboard" element={<SurveyDashboard />} />*/ }
+            {/* Surveyor routes */}
+          
+            {/* <Route path="/surveyor/dashboard" element={<SurveyorDashboard />} /> */}
 
 
-        <Route path="/" element={<HomePage />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/logout" element={<Logout />} />
-        <Route path="/about" element={<About />} />
-      </Routes>
-    </BrowserRouter>
+          
+
+            {/* Respondent routes */}
+            <Route path="/respondent/dashboard" element={<RespondentDashboard />} />
+            <Route path="/respondent/activesurveys" element={<ActiveSurveys/>} />
+            <Route path="/TakeSurvey/:surveyId" element={<TakeSurvey />} />
+
+
+            {/* Surveyor routes */}
+            {/* <Route path="/surveyor/dashboard" element={<SurveyDashboard />} />*/ }
+
+
+          </Routes>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
 

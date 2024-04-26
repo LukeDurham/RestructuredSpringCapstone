@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import '../../../../global.css';
-import AdminSideBar from '../../../../components/AdminSideBar'; // Import AdminSideBar instead of AdminAppBar
+import { Box, Button, Typography } from '@mui/material'; // Using MUI components for consistency
+import AdminSideBar from '../../../../components/AdminSideBar'; // Sidebar component
 
 const AssignUserPermissions = () => {
     const [roles, setRoles] = useState([]);
@@ -71,49 +71,74 @@ const AssignUserPermissions = () => {
         }
     };
 
-    // Style object for the centering and background
-    const centerContentStyle = {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: 'purple', // Purple background for the entire form container
-        color: 'white', // White text
-        padding: '20px',
-        borderRadius: '8px',
-        margin: '50px auto', // Center horizontally and add vertical spacing
-        width: '1600px',
-        height: '1000px', // Max width for better control
-    };
-
     return (
-        <div style={{ display: 'flex' }}>
-            <AdminSideBar />
-            <div className={"center-content"}>
-                <h2>Assign User Permissions</h2>
-                <form onSubmit={handleSubmit} className='custom-form'>
-                    <div className='custom-dropdown custom-dropdown-user'>
-                        <label>User Email:</label>
-                        <select value={selectedUserId} onChange={handleUserChange} required>
-                            <option value="">Select User Email</option>
-                            {users.map((user) => (
-                                <option key={user.id} value={user.id}>{user.email}</option>
-                            ))}
-                        </select>
-                    </div>
-                    <div className='custom-dropdown custom-dropdown-role'>
-                        <label>Role:</label>
-                        <select value={selectedRole} onChange={handleRoleChange} required>
-                            <option value="">Select Role</option>
-                            {roles.map((role) => (
-                                <option key={role.id} value={role.id}>{role.name}</option>
-                            ))}
-                        </select>
-                    </div>
-                    <button type="submit">Assign Role</button>
-                </form>
-            </div>
-        </div>
+        <Box display="flex"> {/* Flex layout for sidebar and main content */}
+            <AdminSideBar /> {/* Sidebar */}
+            <Box
+                flex="1" // Main content should take the remaining space
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                height="100vh" // Full viewport height to center vertically
+                padding={6} // Increased padding for more space around the content
+            >
+                <Box
+                    bgcolor="#f0f0f0" // Light gray background
+                    padding={6} // Increased padding inside the box
+                    borderRadius="12px" // Larger border radius for a more rounded look
+                    boxShadow={4} // Larger shadow for more depth
+                    width="600px" // Wider box to accommodate larger elements
+                >
+                    <Typography variant="h4" gutterBottom style={{ color: 'black', fontSize: '36px' }}> {/* Larger font size */}
+                        Assign User Permissions
+                    </Typography>
+                    <form onSubmit={handleSubmit}>
+                        <Box display="flex" flexDirection="column" gap={3}> {/* Larger gap between elements */}
+                            <Box>
+                                <label style={{ color: 'black', fontSize: '16px' }}>User Email:</label> {/* Larger text */}
+                                <select
+                                    value={selectedUserId}
+                                    onChange={handleUserChange}
+                                    required
+                                    style={{ padding: '12px', borderRadius: '6px', fontSize: '16px', width: '100%' }} // Larger padding and font size
+                                >
+                                    <option value="">Select User Email</option>
+                                    {users.map((user) => (
+                                        <option key={user.id} value={user.id}>
+                                            {user.email}
+                                        </option>
+                                    ))}
+                                </select>
+                            </Box>
+                            <Box>
+                                <label style={{ color: 'black', fontSize: '16px' }}>Role:</label> {/* Larger text */}
+                                <select
+                                    value={selectedRole}
+                                    onChange={handleRoleChange}
+                                    required
+                                    style={{ padding: '12px', borderRadius: '6px', fontSize: '16px', width: '100%' }} // Larger padding and font size
+                                >
+                                    <option value="">Select Role</option>
+                                    {roles.map((role) => (
+                                        <option key={role.id} value={role.id}>
+                                            {role.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </Box>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                type="submit"
+                                style={{ padding: '12px', fontSize: '16px' }} // Larger button
+                            >
+                                Assign Role
+                            </Button>
+                        </Box>
+                    </form>
+                </Box>
+            </Box>
+        </Box>
     );
 };
 

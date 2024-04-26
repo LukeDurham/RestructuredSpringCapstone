@@ -6,12 +6,20 @@ import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import SearchIcon from '@mui/icons-material/Search'; // Import SearchIcon for the new item
 import GroupIcon from '@mui/icons-material/Group'; // Import the Group icon
 import AssignmentIcon from '@mui/icons-material/Assignment'; // Import the icon from MUI
+import { useNavigate } from 'react-router-dom';
 
-const CSSidebar = ({ onAddQuestion  }) => {
+const CSSidebar = ({ onAddQuestion }) => {
+    const navigate = useNavigate();
+
+    // Define the navigateToDashboard function
+    const navigateToDashboard = () => {
+        navigate('/admin/dashboard');
+    };
+
     return (
         <SidebarContainer>
             <SidebarItem onClick={() => onAddQuestion('True or False')}>
-                <RuleIcon /> {/* Icon next to the text */}
+                <RuleIcon />
                 True or False
             </SidebarItem>
             <SidebarItem onClick={() => onAddQuestion('Likert Scale')}>
@@ -22,7 +30,6 @@ const CSSidebar = ({ onAddQuestion  }) => {
                 <DragIndicatorIcon />
                 Multiple Choice
             </SidebarItem>
-            {/* Add the new sidebar item for adding existing questions */}
             <SidebarItem onClick={() => onAddQuestion('Add Existing Question')}>
                 <SearchIcon />
                 Add Existing Question
@@ -38,6 +45,13 @@ const CSSidebar = ({ onAddQuestion  }) => {
             <SidebarItem onClick={() => onAddQuestion('Assign Project')}>
                 <AssignmentIcon />
                 Assign to Project(s)
+            </SidebarItem>
+            <SidebarItem
+                onClick={navigateToDashboard} // Correctly bind the navigate function call
+                style={{ marginTop: '125px' }}  // Adjust the margin as needed
+            >
+                <AssignmentIcon />
+                Go back to dashboard.
             </SidebarItem>
         </SidebarContainer>
     );

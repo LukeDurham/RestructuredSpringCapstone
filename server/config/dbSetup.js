@@ -41,4 +41,5 @@ const setupDatabase = async () => {
     // Ensure the client is released back to the pool in case of error
     if (client) client.release();
   }
+  setupDatabase();
 };

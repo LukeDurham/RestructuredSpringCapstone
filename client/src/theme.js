@@ -1,5 +1,95 @@
-import { createContext, useState, useMemo } from "react";
-import { createTheme } from "@mui/material/styles";
+// theme.js
+import { createTheme } from '@mui/material/styles';
+
+
+// // Original Ocean theme
+// const oceanTheme = createTheme({
+//   palette: {
+//     primary: {
+//       main: '#0A4D68', // Deep Ocean Blue
+//       dark: '#082C3E', // Darker Deep Ocean Blue
+//     },
+//     secondary: {
+//       main: '#05BFDB', // Bright Sky Blue
+//       light: '#80FFE7', // Light Aqua Green
+//     },
+//     // Additional common colors
+//   }
+// });
+
+// // Night Sky theme
+
+// const nightSkyTheme = createTheme({
+//   palette: {
+//     primary: {
+//       main: '#070F2B', // Deep Navy
+//       dark: '#1B1A55', // Dark Violet Blue
+//     },
+//     secondary: {
+//       main: '#535C91', // Soft Blue
+//       light: '#9290C3', // Light Lavender
+//     },
+//     background: {
+//       default: '#9290C3', // Matching the primary main color for cohesive design
+//       paper: '#1B1A55', // Slightly lighter for components like Card, Paper, etc.
+//     }
+//     // Additional common colors
+//   }
+// });
+
+
+// const Summertheme = createTheme({
+//   palette: {
+//     primary: {
+//       main: '#B3C8CF', // Deep Navy
+//       dark: '#BED7DC', // Dark Violet Blue
+//     },
+//     secondary: {
+//       main: '#F1EEDC', // Soft Blue
+//       light: '#E5DDC5', // Light Lavender
+//     },
+//     background: {
+//       default: '#F1EEDC', // Matching the primary main color for cohesive design
+//       paper: '#1B1A55', // Slightly lighter for components like Card, Paper, etc.
+//     }
+//     // Additional common colors
+//   }
+// });
+
+
+// // New Green Tones theme
+// const greenTonesTheme = createTheme({
+//   palette: {
+//     primary: {
+//       main: '#D7E4C0', // Light Moss Green
+//       dark: '#BBC3A4', // Muted Olive
+//     },
+//     secondary: {
+//       main: '#C6DCBA', // Soft Green
+//       light: '#B3A398', // Warm Grey
+//     },
+//     // Additional common colors
+//   }
+// });
+
+// // New Neutral Tones theme
+// const neutralTonesTheme = createTheme({
+//   palette: {
+//     primary: {
+//       main: '#B4B4B8', // Light Gray
+//       dark: '#C7C8CC', // Cool Gray
+//     },
+//     secondary: {
+//       main: '#E3E1D9', // Off White
+//       light: '#F2EFE5', // Pale Ivory
+//     },
+//     // Additional common colors
+//   }
+// });
+
+// export { oceanTheme, nightSkyTheme, greenTonesTheme, neutralTonesTheme, Summertheme };
+
+
 
 // color design tokens export
 export const tokens = (mode) => ({
@@ -193,22 +283,3 @@ export const themeSettings = (mode) => {
   };
 };
 
-// context for color mode
-export const ColorModeContext = createContext({
-  toggleColorMode: () => { },
-});
-
-export const useMode = () => {
-  const [mode, setMode] = useState("dark");
-
-  const colorMode = useMemo(
-    () => ({
-      toggleColorMode: () =>
-        setMode((prev) => (prev === "light" ? "dark" : "light")),
-    }),
-    []
-  );
-
-  const theme = useMemo(() => createTheme(themeSettings(mode)), [mode]);
-  return [theme, colorMode];
-};

@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { useAuth } from '../../../utils/AuthContext'; // Ensure path is correct
+import { useAuth } from '../../../../scenes/utils/AuthContext'; // Ensure path is correct
 import AdminSideBar from '../../../../components/AdminSideBar'; // Correct the path as necessary
 
 const AddOrganization = () => {

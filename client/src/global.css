@@ -1,6 +1,13 @@
-/* global.css is used for global styles that are common across the entire application. */
-body {
-    background-color: #121212;
-    /* Add any other global styles here */
+
+:root {
+    --background-color-default: black;
+    --background-color-1: #0A4D68;
+    --background-color-2: #D7E4C0;
+    --background-color-3: #FFE7E7;
+    --background-color: var(--background-color-default); /* Default background color */
 }
 
+body {
+    background-color: var(--background-color);
+    /* Other body styles */
+}

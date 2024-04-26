@@ -19,6 +19,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { useAuth } from '../../scenes/utils/AuthContext';
 import { makeStyles } from '@material-ui/core/styles';
+import { useNavigate } from 'react-router-dom';
 
 const questionTypeToId = {
     'True or False': 1,
@@ -38,6 +39,9 @@ const useStyles = makeStyles(theme => ({
 
 
 export const SurveyCreatorComponent = ({ setSuccessMessage, setErrorMessage }) => {
+    
+    
+
     const classes = useStyles();
     const [organizationId, setOrganizationId] = useState(null);
     const [projectId, setProjectId] = useState(null);
@@ -170,8 +174,7 @@ export const SurveyCreatorComponent = ({ setSuccessMessage, setErrorMessage }) =
 
 
 
-
-
+    
 
     const getDefaultOptions = (type) => {
         const options = {
